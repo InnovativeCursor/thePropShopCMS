@@ -32,6 +32,10 @@ const usersSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  code: {
+    type: Number,
+    require: true,
+  },
 });
 
 module.exports = mongoose.model("users", usersSchema);
