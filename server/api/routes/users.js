@@ -32,7 +32,7 @@ const signup = async (req, res) => {
     if (checkSimilarUser) {
       return res.status(500).send({ message: "User already exists" });
     }
-    if (aCode != process.env.ACODE) {
+    if (aCode != process.env.ACODE || !aCode) {
       return res.status(500).send({ message: "Something's wrong!" });
     }
     // Hashing the password
