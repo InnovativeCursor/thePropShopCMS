@@ -3,6 +3,7 @@ const express = require("express");
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 const CryptoJS = require("crypto-js");
+const { default: next } = require("next");
 
 const allUsers = async (req, res) => {
   const allUsers = await users.find({});
@@ -13,19 +14,31 @@ const allUsers = async (req, res) => {
     res.sendStatus(500).send({ message: error });
   }
 };
-
 const signup = async (req, res) => {
   try {
     // Get email and password off req body
-    const { userId, firstName, lastName, email, password, roleId, role } =
-      req.body;
-    //Check if the user exists
+    const {
+      userId,
+      firstName,
+      lastName,
+      email,
+      password,
+      roleId,
+      role,
+      aCode,
+    } = req.body;
+    // Check if the user exists
     const checkSimilarUser = await users.findOne({ email });
-    if (checkSimilarUser)
-      return res.sendStatus(500).send({ message: "User already exists!" });
-    //hashing the password
+    if (checkSimilarUser) {
+      return res.status(500).send({ message: "User already exists" });
+    }
+    if (aCode != process.env.ACODE) {
+      return res.status(500).send({ message: "Something's wrong!" });
+    }
+    // Hashing the password
     const hashPassword = bcrypt.hashSync(password, 8);
-    //Create user
+    // const hashaCode = bcrypt.hashSync(aCode, 8);
+    // Create user
     await users.create({
       userId: userId,
       firstName: firstName,
@@ -34,14 +47,59 @@ const signup = async (req, res) => {
       password: hashPassword,
       roleId: roleId,
       role: role,
+      code: aCode,
     });
-
-    //respond
+    // Respond
     res.sendStatus(200);
   } catch (error) {
-    res.sendStatus(400).send({ message: error });
+    // Send error response
+    res.status(400).send({ message: error.message });
   }
 };
+
+// const signup = async (req, res) => {
+//   try {
+//     // Get email and password off req body
+//     const {
+//       userId,
+//       firstName,
+//       lastName,
+//       email,
+//       password,
+//       roleId,
+//       role,
+//       aCode,
+//     } = req.body;
+//     //Check if the user exists
+//     const checkSimilarUser = await users.findOne({ email });
+//     if (checkSimilarUser) {
+//       return res.status(500).send({ message: "User already exists" });
+//     }
+//     if (aCode !== 4166) {
+//       console.log("reached here");
+
+//       return res.status(500).send({ message: "Something's wrong!" });
+//     }
+//     //hashing the password
+//     const hashPassword = bcrypt.hashSync(password, 8);
+//     const hashaCode = bcrypt.hashSync(aCode, 8);
+//     //Create user
+//     await users.create({
+//       userId: userId,
+//       firstName: firstName,
+//       lastName: lastName,
+//       email: email,
+//       password: hashPassword,
+//       roleId: roleId,
+//       role: role,
+//       code: hashaCode,
+//     });
+//     //respond
+//     res.sendStatus(200);
+//   } catch (error) {
+//     res.sendStatus(400).send({ message: error });
+//   }
+// };
 
 const login = async (req, res) => {
   try {
