@@ -5,11 +5,7 @@ import { NavLink } from "react-router-dom";
 const menu = [
   {
     text: "Add Product",
-    link: "/createproduct",
-  },
-  {
-    text: "Catalogue Management",
-    link: "/cataloguemanagement",
+    link: "/addproduct",
   },
   {
     text: "Update Product",
@@ -28,12 +24,8 @@ const menu = [
     link: "/viewusers",
   },
   {
-    text: "Home Page Editor",
-    link: "/cms",
-  },
-  {
-    text: "Categories page Editor",
-    link: "/categories",
+    text: "Catalogue Management",
+    link: "/cataloguemanagement",
   },
 ];
 function SideDrawer() {
@@ -55,12 +47,12 @@ function SideDrawer() {
         onClick={showDrawer}
         className="top-1/2 fixed rounded-lg text-6xl z-10"
       >
-        <div className="rounded-full bg-orange-400 border-spacing-8 p-4">
-          <FaArrowRight />
+        <div className="rounded-full bg-slate-500 border-spacing-8 p-2 ml-1">
+          <FaArrowRight className="h-10 w-10" />
         </div>
       </button>
       <Drawer
-        title="Ink Attire Action Menu"
+        title="PropShop Worldwide Action Menu"
         placement={placement}
         width={500}
         onClose={onClose}

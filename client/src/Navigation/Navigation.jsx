@@ -13,7 +13,6 @@ import PrivateRoute from "./PrivateRoute";
 import SideDrawer from "../Components/Drawer/SideDrawer";
 import { matchRoutes, useLocation } from "react-router-dom";
 import Navbar from "../Components/NavigationBar/Navbar";
-import CreateProduct from "../Components/createProd/CreateProduct";
 import DeleteInner from "../Components/deleteProd/DeleteInner";
 import ProductTable from "../Components/ProductTable/ProductTable";
 import ViewInner from "../Components/viewProd/ViewInner";
@@ -22,6 +21,7 @@ import Robots from "../Components/Robots/Robots";
 import CatalogueManagement from "../Components/catalogueManagement/CatalogueManagement";
 import CMS from "../Components/cms/CMS";
 import Categories from "../Categories/Categories";
+import AddProduct from "../Components/createProd/AddProduct";
 
 function Navigation(props) {
   const location = useLocation();
@@ -52,7 +52,7 @@ function Navigation(props) {
             <Route path="/" element={<Login />} />
             <Route element={<PrivateRoute />}>
               <Route path="/home" element={<Home />} />
-              <Route path="/createproduct" element={<CreateProduct />} />
+              <Route path="/addproduct" element={<AddProduct />} />
               <Route
                 path="/cataloguemanagement"
                 element={<CatalogueManagement />}

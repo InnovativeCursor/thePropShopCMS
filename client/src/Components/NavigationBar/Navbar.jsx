@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { connect } from "react-redux";
-import logo from "../../assets/Images/inklothes.svg";
+import logo from "../../assets/Images/propshop_logo.svg";
 function Navbar(props) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -9,11 +9,11 @@ function Navbar(props) {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
   return (
-    <nav className="bg-orange-600 p-4">
+    <nav className="bg-gray-500 p-4">
       <div className="container mx-auto">
         <div className="flex justify-between items-center">
           {/* Logo or Brand Name */}
-          <div className="">
+          <div className="w-28">
             <NavLink href="/" className="text-pink-200 text-3xl font-serif ">
               <img
                 src={logo}
@@ -22,10 +22,10 @@ function Navbar(props) {
                 loading="eager"
                 priority={true}
                 style={{
-                  height: "70px",
+                  // height: "100%",
+                  // width: "100%",
                   verticalAlign: "middle",
-                  width: "147px",
-                  transform: "scale(6.5)",
+                  // transform: "scale(6.5)",
                 }}
               />
               {/* <span className="self-center text-3xl font-bold whitespace-nowrap">
