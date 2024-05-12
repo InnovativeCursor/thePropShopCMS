@@ -10,75 +10,42 @@ const productsSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
-  title: {
-    type: String,
-    require: true,
-  },
-  quantity: {
-    type: Object,
-    required: true,
-  },
-  discount_percent: {
-    type: Number,
-    required: false,
-  },
-  price: {
+  boothSize: {
     type: Number,
     required: true,
   },
-  totalPrice: {
+  budgetMinimum: {
     type: Number,
     required: true,
   },
-  savings: {
+  budgetMaximum: {
     type: Number,
-    required: false,
+    required: true,
   },
-  // size: {
-  //   type: String,
-  //   required: true,
-  // },
+  closed_Meeting_Room: {
+    type: Number,
+    required: true,
+  },
+  demo_Stations: {
+    type: Number,
+    required: true,
+  },
+  open_Discusison_Areas: {
+    type: Number,
+    required: true,
+  },
+  functionalRequirements: {
+    type: Array,
+    required: true,
+  },
   description: {
     type: String,
     require: true,
   },
-  clothingType: {
-    type: String,
-    require: true,
-  },
-  genre: {
-    type: String,
-    require: true,
-  },
-  // bodyType: {
-  //   type: String,
-  //   require: true,
-  // },
   productImages: {
     type: Array,
     required: true,
   },
-  sales: {
-    type: Number,
-    require: false,
-    default: 0,
-  },
-  reviews: {
-    type: Array,
-    require: false,
-  },
-  ratings: {
-    type: Number,
-    require: false,
-  },
-  gender: {
-    type: String,
-    require: true,
-  },
-  // skinShade: {
-  //   type: String,
-  //   require: true,
-  // },
 });
 
 module.exports = mongoose.model("products", productsSchema);
