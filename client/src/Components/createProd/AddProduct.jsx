@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import PageWrapper from "../PageContainer/PageWrapper";
-import { Form, Input, Spin, Checkbox, Upload } from "antd";
+import { Form, Input, Spin, Checkbox, Upload, InputNumber } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { PlusOutlined } from "@ant-design/icons";
+import Creatable from "react-select/creatable";
+import Swal from "sweetalert2";
 
 export default function AddProduct() {
   const [loading, setLoading] = useState(false);
   const [imageArray, setImageArray] = useState([]);
-
+  const [inputs, setInputs] = useState({});
   const onChange = (checkedValues) => {
+    debugger;
     console.log("checked = ", checkedValues);
   };
   const options = [
@@ -53,11 +56,43 @@ export default function AddProduct() {
       value: "TouchScreenKiosk",
     },
   ];
+  const submitForm = async () => {
+    if (inputs?.location || inputs?.boothSize || inputs?.budget) {
+      Swal.fire({
+        title: "error",
+        text: "Location, Booth Size and Budget are mandatory fields",
+        icon: "error",
+        confirmButtonText: "Alright!",
+        allowOutsideClick: false,
+      });
+      return;
+    }
+    try {
+      const answer = await postAxiosCall("/createproduct", inputs);
+      if (answer) {
+        Swal.fire({
+          title: "Success",
+          text: answer?.message,
+          icon: "success",
+          confirmButtonText: "Great!",
+          allowOutsideClick: false,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "error",
+        text: error,
+        icon: "error",
+        confirmButtonText: "Alright!",
+        allowOutsideClick: false,
+      });
+    }
+  };
   return (
     <PageWrapper title={"Add Data"}>
       <div className="container mx-auto p-4 text-xl">
         <Spin spinning={loading}>
-          <Form>
+          <Form onFinish={submitForm}>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               <div>
                 <label
@@ -93,80 +128,137 @@ export default function AddProduct() {
                   htmlFor="name"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Location
+                  Location (City,Country)
                 </label>
-                <select
+                {/* <select
                   required
                   size="large"
                   className="mt-1 p-2 block w-full border rounded-md"
                   name="Location"
                   id="Location"
-                ></select>
+                ></select> */}
+                <Creatable
+                  placeholder="Location"
+                  required
+                  isMulti={false}
+                  onChange={(e) => {
+                    setInputs({ ...inputs, location: e.value });
+                  }}
+                  isClearable
+                  // options={boothSize.length != 0 ? boothSize : []}
+                  isSearchable
+                  value={{ label: inputs?.location, value: inputs?.location }}
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Booth Size
+                  Booth Size (For eg: 10X20)
                 </label>
-                <select
+                {/* <select
                   required
                   size="large"
                   className="mt-1 p-2 block w-full border rounded-md"
                   name="BoothSize"
                   id="BoothSize"
-                ></select>
+                ></select> */}
+                <Creatable
+                  placeholder="Booth Size"
+                  required
+                  isMulti={false}
+                  onChange={(e) => {
+                    setInputs({ ...inputs, boothSize: e.value });
+                  }}
+                  isClearable
+                  // options={boothSize.length != 0 ? boothSize : []}
+                  isSearchable
+                  value={{ label: inputs?.boothSize, value: inputs?.boothSize }}
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Budget
+                  Budget Range (in US$)
                 </label>
-                <select
+                {/* <select
                   required
                   size="large"
                   className="mt-1 p-2 block w-full border rounded-md"
                   name="Budget"
                   id="Budget"
-                ></select>
+                ></select> */}
+                <Creatable
+                  placeholder="Budget"
+                  required
+                  isMulti={false}
+                  onChange={(e) => {
+                    setInputs({ ...inputs, budget: e.value });
+                  }}
+                  isClearable
+                  // options={boothSize.length != 0 ? boothSize : []}
+                  isSearchable
+                  value={{ label: inputs?.budget, value: inputs?.budget }}
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Closed Meeting Room
                 </label>
-                <select
+                {/* <select
                   required
                   size="large"
                   className="mt-1 p-2 block w-full border rounded-md"
                   name="ClosedMeetingRoom"
                   id="ClosedMeetingRoom"
-                ></select>
+                ></select> */}
+                <InputNumber
+                  size="large"
+                  className="w-full rounded-md"
+                  min={1}
+                  max={10}
+                  onChange={(e) => {
+                    setInputs({ ...inputs, closed_meeting_room: e?.value });
+                  }}
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Number of Demo Stations
                 </label>
-                <select
+                {/* <select
                   required
                   size="large"
                   className="mt-1 p-2 block w-full border rounded-md"
                   name="DemoStations"
                   id="DemoStations"
-                ></select>
+                ></select> */}
+                <InputNumber
+                  size="large"
+                  className="w-full rounded-md"
+                  min={1}
+                  max={10}
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Open Discussion Areas
                 </label>
-                <select
+                {/* <select
                   required
                   size="large"
                   className="mt-1 p-2 block w-full border rounded-md"
                   name="OpenDiscussionAreas"
                   id="OpenDiscussionAreas"
-                ></select>
+                ></select> */}
+                <InputNumber
+                  size="large"
+                  className="w-full rounded-md"
+                  min={1}
+                  max={10}
+                />
               </div>
             </div>
 

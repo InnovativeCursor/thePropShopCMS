@@ -12,14 +12,51 @@ exports.getProducts = async (req, res) => {
   }
 };
 exports.createProduct = async (req, res) => {
+  const {
+    prd_id,
+    product_name,
+    location,
+    booth_size,
+    budget,
+    closed_meeting_room,
+    demo_stations,
+    open_discussion_area,
+    bar_area,
+    hanging_sign,
+    led_video_wall,
+    longue_area,
+    product_display,
+    reception_counter,
+    semi_closed_meeting_area,
+    storage_room,
+    theatre_style_demo,
+    touch_screen_kiosk,
+    description,
+    pictures, // pictures should be an array of base64 strings
+  } = req.body;
   try {
-    const { name, description } = req.body;
-    if (!name || !description) {
-      return res
-        .status(400)
-        .json({ message: "Name and description are required" });
-    }
-    const product = await Product.create({ name, description });
+    await Product.create({
+      prd_id,
+      product_name,
+      location,
+      booth_size,
+      budget,
+      closed_meeting_room,
+      demo_stations,
+      open_discussion_area,
+      bar_area,
+      hanging_sign,
+      led_video_wall,
+      longue_area,
+      product_display,
+      reception_counter,
+      semi_closed_meeting_area,
+      storage_room,
+      theatre_style_demo,
+      touch_screen_kiosk,
+      description,
+      pictures,
+    });
     res.status(201).json({ message: "Product Created Successfully!" });
   } catch (error) {
     res

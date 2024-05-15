@@ -5,11 +5,22 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
 exports.signup = async (req, res) => {
+  const { first_name, last_name, email, password, role, role_id } = req.body;
   try {
-    const { email, password } = req.body;
+    const findEmail = await User.findOne({ where: { email } });
+    if (findEmail) {
+      return res.status(401).json({ message: "User already exists" });
+    }
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 8);
-    await User.create({ email, password: hashedPassword });
+    await User.create({
+      first_name,
+      last_name,
+      email,
+      password: hashedPassword,
+      role,
+      role_id,
+    });
     res.status(200).json({ message: "User Successfully registered!" });
   } catch (error) {
     res.status(400).json({ message: "Signup failed", error: error.message });
@@ -48,7 +59,7 @@ exports.login = async (req, res) => {
     }
     // Generate JWT token
     const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
-    const token = jwt.sign({ encode: user.id, exp }, process.env.SECRET);
+    const token = jwt.sign({ encode: user.user_id, exp }, process.env.SECRET);
 
     // const token = jwt.sign(
     //   { id: user.id, email: user.email },
@@ -56,7 +67,14 @@ exports.login = async (req, res) => {
     // );
     const sendUserInfo = await User.findOne({
       where: { email },
-      attributes: ["id", "email"],
+      attributes: [
+        "user_id",
+        "first_name",
+        "last_name",
+        "email",
+        "role",
+        "role_id",
+      ],
     });
     res.status(200).json({ sendUserInfo, token });
   } catch (error) {
@@ -66,7 +84,14 @@ exports.login = async (req, res) => {
 exports.allUsers = async (req, res) => {
   try {
     const users = await User.findAll({
-      attributes: ["id", "email"],
+      attributes: [
+        "user_id",
+        "first_name",
+        "last_name",
+        "email",
+        "role",
+        "role_id",
+      ],
     });
     res.status(200).json({ users });
   } catch (error) {

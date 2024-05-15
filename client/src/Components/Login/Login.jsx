@@ -27,11 +27,9 @@ function Login(props) {
         encryptedEmail,
         encryptedPassword,
       });
-
-      answer;
       if (answer) {
         localStorage.setItem("access_token", answer?.token);
-        props.isLoggedIn(answer?.sendUserInfo[0]);
+        props.isLoggedIn(answer?.sendUserInfo);
         navigateTo("/home");
       } else {
         ("error");

@@ -144,7 +144,48 @@ function CatalogueManagement() {
                 {boothSizeButton}
               </button>
             </div>
-            <div className="flex gap-2 flex-col">
+            <div>
+              <label
+                htmlFor="text"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Add Budget Range
+              </label>
+              <Creatable
+                placeholder="Functional Requirements"
+                required
+                isMulti={false}
+                onChange={(e) => {
+                  let finalText = functionalReq?.filter(
+                    (el) => el?.value === e?.value
+                  );
+                  if (finalText?.length != 0) {
+                    setFunctionalReqButton("Delete Data");
+                  } else {
+                    setFunctionalReqButton("Save Data");
+                  }
+                  setInputs({ ...inputs, functionalReq: e?.value });
+                }}
+                isClearable
+                options={functionalReq.length != 0 ? functionalReq : []}
+                isSearchable
+                value={{
+                  label: inputs?.functionalReq,
+                  value: inputs?.functionalReq,
+                }}
+              />
+            </div>
+            <div className="acitonButtons w-full flex justify-center">
+              <button
+                className="my-4 text-black p-4 font-semibold hover:bg-orange-400 hover:text-white rounded-lg bg-indigo-200"
+                type="button"
+                // onClick={saveboothSize}
+                disabled={inputs?.genre ? false : true}
+              >
+                {boothSizeButton}
+              </button>
+            </div>
+            {/* <div className="flex gap-2 flex-col">
               <label
                 htmlFor="text"
                 className="block text-sm font-medium text-gray-700"
@@ -193,7 +234,7 @@ function CatalogueManagement() {
               >
                 Save Data
               </button>
-            </div>
+            </div> */}
           </div>
         </Form>
       </PageWrapper>

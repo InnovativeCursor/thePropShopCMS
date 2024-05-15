@@ -9,11 +9,12 @@ const init = {
 const reducer = (state = init, action) => {
   switch (action.type) {
     case "LOGGEDIN":
+      debugger;
       return {
         ...state,
         // email: action.payload,
-        firstName: action.payload?.firstName,
-        lastName: action.payload?.lastName,
+        firstName: action.payload?.first_name,
+        lastName: action.payload?.last_name,
         isLoggedIn: true,
       };
     case "LOGGEDOUT":

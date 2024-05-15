@@ -10,18 +10,18 @@ function Home(props) {
   const columns = [
     {
       title: "User Id",
-      dataIndex: "userId",
-      key: "userId",
+      dataIndex: "user_id",
+      key: "user_id",
     },
     {
       title: "First Name",
-      dataIndex: "firstName",
-      key: "firstName",
+      dataIndex: "first_name",
+      key: "first_name",
     },
     {
       title: "Last Name",
-      dataIndex: "lastName",
-      key: "lastName",
+      dataIndex: "last_name",
+      key: "last_name",
     },
     {
       title: "Email Id",
@@ -35,15 +35,16 @@ function Home(props) {
     },
     {
       title: "Role Id",
-      dataIndex: "roleId",
-      key: "roleId",
+      dataIndex: "role_id",
+      key: "role_id",
     },
   ];
   const [results, setResults] = useState("");
   const navigateTo = useNavigate();
   const fetchRes = async () => {
     const res = await getAxiosCall("/users");
-    setResults(res.data);
+    debugger;
+    setResults(res.data?.users);
   };
   const logOut = async () => {
     window.localStorage.clear();
