@@ -9,7 +9,6 @@ const init = {
 const reducer = (state = init, action) => {
   switch (action.type) {
     case "LOGGEDIN":
-      debugger;
       return {
         ...state,
         // email: action.payload,

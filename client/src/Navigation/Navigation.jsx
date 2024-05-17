@@ -52,7 +52,10 @@ function Navigation(props) {
             <Route path="/" element={<Login />} />
             <Route element={<PrivateRoute />}>
               <Route path="/home" element={<Home />} />
-              <Route path="/addproduct" element={<AddProduct />} />
+              <Route
+                path="/addproduct"
+                element={<AddProduct pageMode="Add" />}
+              />
               <Route
                 path="/cataloguemanagement"
                 element={<CatalogueManagement />}

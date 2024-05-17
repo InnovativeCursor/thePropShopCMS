@@ -1,63 +1,141 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PageWrapper from "../PageContainer/PageWrapper";
 import { Form, Input, Spin, Checkbox, Upload, InputNumber } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { PlusOutlined } from "@ant-design/icons";
 import Creatable from "react-select/creatable";
 import Swal from "sweetalert2";
+import { getAxiosCall, postAxiosCall } from "../../Axios/UniversalAxiosCalls";
+import { useNavigate } from "react-router-dom";
 
-export default function AddProduct() {
+export default function AddProduct(props) {
   const [loading, setLoading] = useState(false);
   const [imageArray, setImageArray] = useState([]);
+  const [checkedValues, setCheckedValues] = useState();
   const [inputs, setInputs] = useState({});
+  const [locationOptions, setLocationOptions] = useState();
+  const [boothSizeOptions, setBoothSizeOptions] = useState();
+  const [budgetOptions, setBudgetOptions] = useState();
+  const NavigateTo = useNavigate();
+  useEffect(() => {
+    callingOptions();
+  }, []);
+  const callingOptions = async () => {
+    const resLocation = await getAxiosCall("/locationOptions");
+    if (resLocation) {
+      const collection = resLocation.data?.map((el) => ({
+        label: el,
+        value: el,
+      }));
+      setLocationOptions(collection);
+    }
+    const resBooth = await getAxiosCall("/boothsizeOptions");
+    if (resBooth) {
+      const collection = resBooth.data?.map((el) => ({
+        label: el,
+        value: el,
+      }));
+      setBoothSizeOptions(collection);
+    }
+    const resBudget = await getAxiosCall("/budgetOptions");
+    if (resBudget) {
+      const collection = resBudget.data?.map((el) => ({
+        label: el,
+        value: el,
+      }));
+      setBudgetOptions(collection);
+    }
+  };
   const onChange = (checkedValues) => {
-    debugger;
+    const object = checkedValues.reduce((acc, key) => {
+      acc[key] = true;
+      return acc;
+    }, {});
+    setCheckedValues(object);
+
     console.log("checked = ", checkedValues);
   };
   const options = [
     {
       label: "Bar Area",
-      value: "BarArea",
+      value: "bar_area",
     },
     {
       label: "Hanging sign",
-      value: "HangingSign",
+      value: "hanging_sign",
     },
     {
       label: "LED Video Wall",
-      value: "LEDWall",
+      value: "led_video_wall",
     },
     {
       label: "Lounge Area",
-      value: "LoungeArea",
+      value: "longue_area",
     },
     {
       label: "Product Display",
-      value: "ProductDisplay",
+      value: "product_display",
     },
     {
       label: "Reception Counter",
-      value: "ReceptionCounter",
+      value: "reception_counter",
     },
     {
       label: "Semi Closed Meeting Area",
-      value: "ClosedMeetingArea",
+      value: "semi_closed_meeting_area",
     },
     {
       label: "Storage Room",
-      value: "StorageRoom",
+      value: "storage_room",
     },
     {
       label: "Theatre Style Demo",
-      value: "TheatreStyleDemo",
+      value: "theatre_style_demo",
     },
     {
       label: "Touch Screen Kiosk",
-      value: "TouchScreenKiosk",
+      value: "touch_screen_kiosk",
     },
   ];
+  const getBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  const convertAllToBase64 = async () => {
+    if (props.pageMode === "Add") {
+      if (imageArray?.length != 0) {
+        let B64Array = [];
+        let asd;
+        for (let i = 0; i < imageArray?.length; i++) {
+          const base64String = await getBase64(imageArray[i]?.originFileObj);
+          B64Array.push(base64String);
+        }
+        let dummyObj = { pictures: [...B64Array] };
+
+        asd = Object.assign(inputs, { pictures: dummyObj?.pictures });
+        setInputs({ ...inputs, pictures: asd });
+      }
+    } else {
+      if (imageArray?.length != 0) {
+        let B64Array = [];
+        let asd;
+        for (let i = 0; i < imageArray.length; i++) {
+          const base64String = await getBase64(imageArray[i]?.originFileObj);
+          B64Array.push(base64String);
+        }
+        let dummyObj = [...(inputs && inputs?.pictures)];
+
+        dummyObj = [...dummyObj, ...B64Array];
+        asd = Object.assign(inputs, { pictures: dummyObj });
+        setInputs({ ...inputs, pictures: asd });
+      }
+    }
+  };
   const submitForm = async () => {
-    if (inputs?.location || inputs?.boothSize || inputs?.budget) {
+    if (!inputs?.location || !inputs?.booth_size || !inputs?.budget) {
       Swal.fire({
         title: "error",
         text: "Location, Booth Size and Budget are mandatory fields",
@@ -68,7 +146,20 @@ export default function AddProduct() {
       return;
     }
     try {
-      const answer = await postAxiosCall("/createproduct", inputs);
+      if (imageArray.length == 0) {
+        Swal.fire({
+          title: "error",
+          text: "Add at least one Picture to proceed!",
+          icon: "error",
+          confirmButtonText: "Alright!",
+          allowOutsideClick: false,
+        });
+        return;
+      }
+      await convertAllToBase64();
+      const mergedObject = Object.assign({}, inputs, checkedValues);
+      setInputs(mergedObject);
+      const answer = await postAxiosCall("/createproduct", mergedObject);
       if (answer) {
         Swal.fire({
           title: "Success",
@@ -76,7 +167,10 @@ export default function AddProduct() {
           icon: "success",
           confirmButtonText: "Great!",
           allowOutsideClick: false,
+        }).then(() => {
+          window.location.reload(true);
         });
+        setInputs({});
       }
     } catch (error) {
       Swal.fire({
@@ -95,31 +189,22 @@ export default function AddProduct() {
           <Form onFinish={submitForm}>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  SKU
-                </label>
-                <Input
-                  required
-                  type="text"
-                  id="sku"
-                  name="sku"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                />
-              </div>
-
-              <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Product Name
                 </label>
                 <Input
                   required
                   type="text"
-                  id="productName"
-                  name="productName"
+                  id="product_name"
+                  name="product_name"
                   className="mt-1 p-2 block w-full border rounded-md"
+                  onChange={(e) => {
+                    setInputs({
+                      ...inputs,
+                      [e.target.name]: e.target.value,
+                    });
+                  }}
+                  value={inputs?.product_name}
                 />
               </div>
 
@@ -130,13 +215,6 @@ export default function AddProduct() {
                 >
                   Location (City,Country)
                 </label>
-                {/* <select
-                  required
-                  size="large"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  name="Location"
-                  id="Location"
-                ></select> */}
                 <Creatable
                   placeholder="Location"
                   required
@@ -145,7 +223,7 @@ export default function AddProduct() {
                     setInputs({ ...inputs, location: e.value });
                   }}
                   isClearable
-                  // options={boothSize.length != 0 ? boothSize : []}
+                  options={locationOptions?.length != 0 ? locationOptions : []}
                   isSearchable
                   value={{ label: inputs?.location, value: inputs?.location }}
                 />
@@ -155,24 +233,25 @@ export default function AddProduct() {
                 <label className="block text-sm font-medium text-gray-700">
                   Booth Size (For eg: 10X20)
                 </label>
-                {/* <select
-                  required
-                  size="large"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  name="BoothSize"
-                  id="BoothSize"
-                ></select> */}
                 <Creatable
                   placeholder="Booth Size"
                   required
                   isMulti={false}
                   onChange={(e) => {
-                    setInputs({ ...inputs, boothSize: e.value });
+                    setInputs({
+                      ...inputs,
+                      booth_size: e.value?.toUpperCase(),
+                    });
                   }}
                   isClearable
-                  // options={boothSize.length != 0 ? boothSize : []}
+                  options={
+                    boothSizeOptions?.length != 0 ? boothSizeOptions : []
+                  }
                   isSearchable
-                  value={{ label: inputs?.boothSize, value: inputs?.boothSize }}
+                  value={{
+                    label: inputs?.booth_size?.toUpperCase(),
+                    value: inputs?.booth_size?.toUpperCase(),
+                  }}
                 />
               </div>
 
@@ -180,24 +259,20 @@ export default function AddProduct() {
                 <label className="block text-sm font-medium text-gray-700">
                   Budget Range (in US$)
                 </label>
-                {/* <select
-                  required
-                  size="large"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  name="Budget"
-                  id="Budget"
-                ></select> */}
                 <Creatable
                   placeholder="Budget"
                   required
                   isMulti={false}
                   onChange={(e) => {
-                    setInputs({ ...inputs, budget: e.value });
+                    setInputs({ ...inputs, budget: e.value?.toUpperCase() });
                   }}
                   isClearable
-                  // options={boothSize.length != 0 ? boothSize : []}
+                  options={budgetOptions?.length != 0 ? budgetOptions : []}
                   isSearchable
-                  value={{ label: inputs?.budget, value: inputs?.budget }}
+                  value={{
+                    label: inputs?.budget?.toUpperCase(),
+                    value: inputs?.budget?.toUpperCase(),
+                  }}
                 />
               </div>
 
@@ -205,20 +280,13 @@ export default function AddProduct() {
                 <label className="block text-sm font-medium text-gray-700">
                   Closed Meeting Room
                 </label>
-                {/* <select
-                  required
-                  size="large"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  name="ClosedMeetingRoom"
-                  id="ClosedMeetingRoom"
-                ></select> */}
                 <InputNumber
                   size="large"
                   className="w-full rounded-md"
                   min={1}
                   max={10}
                   onChange={(e) => {
-                    setInputs({ ...inputs, closed_meeting_room: e?.value });
+                    setInputs({ ...inputs, closed_meeting_room: e });
                   }}
                 />
               </div>
@@ -227,18 +295,14 @@ export default function AddProduct() {
                 <label className="block text-sm font-medium text-gray-700">
                   Number of Demo Stations
                 </label>
-                {/* <select
-                  required
-                  size="large"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  name="DemoStations"
-                  id="DemoStations"
-                ></select> */}
                 <InputNumber
                   size="large"
                   className="w-full rounded-md"
                   min={1}
                   max={10}
+                  onChange={(e) => {
+                    setInputs({ ...inputs, demo_stations: e });
+                  }}
                 />
               </div>
 
@@ -246,18 +310,14 @@ export default function AddProduct() {
                 <label className="block text-sm font-medium text-gray-700">
                   Open Discussion Areas
                 </label>
-                {/* <select
-                  required
-                  size="large"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  name="OpenDiscussionAreas"
-                  id="OpenDiscussionAreas"
-                ></select> */}
                 <InputNumber
                   size="large"
                   className="w-full rounded-md"
                   min={1}
                   max={10}
+                  onChange={(e) => {
+                    setInputs({ ...inputs, open_discussion_area: e });
+                  }}
                 />
               </div>
             </div>
