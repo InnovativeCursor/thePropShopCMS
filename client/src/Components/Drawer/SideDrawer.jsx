@@ -23,10 +23,10 @@ const menu = [
     text: "View Users",
     link: "/viewusers",
   },
-  {
-    text: "Catalogue Management",
-    link: "/cataloguemanagement",
-  },
+  // {
+  //   text: "Catalogue Management",
+  //   link: "/cataloguemanagement",
+  // },
 ];
 function SideDrawer() {
   const [open, setOpen] = useState(false);

@@ -9,6 +9,8 @@ const authenticateUser = require("../middleware/authenticateUser");
 router.post("/signup", userController.signup);
 router.post("/login", userController.login);
 router.get("/users", authenticateUser, userController.allUsers);
+
+//For Selectable Options
 router.get(
   "/locationOptions",
   authenticateUser,
@@ -17,20 +19,24 @@ router.get(
 router.get(
   "/budgetOptions",
   authenticateUser,
-  productController.getBoothSizeOptions
+  productController.getBudgetOptions
 );
 router.get(
   "/boothsizeOptions",
   authenticateUser,
-  productController.getBudgetOptions
+  productController.getBoothSizeOptions
 );
-
 // Product routes
-router.get("/products", productController.getProducts);
+router.get("/products", authenticateUser, productController.getProducts);
 router.post(
   "/createproduct",
   authenticateUser,
   productController.createProduct
 );
-
+router.put("/products/:id", authenticateUser, productController.updateProduct);
+router.delete(
+  "/products/:id",
+  authenticateUser,
+  productController.deleteProduct
+);
 module.exports = router;

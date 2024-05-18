@@ -52,14 +52,7 @@ function Navigation(props) {
             <Route path="/" element={<Login />} />
             <Route element={<PrivateRoute />}>
               <Route path="/home" element={<Home />} />
-              <Route
-                path="/addproduct"
-                element={<AddProduct pageMode="Add" />}
-              />
-              <Route
-                path="/cataloguemanagement"
-                element={<CatalogueManagement />}
-              />
+              <Route path="/addproduct" element={<AddProduct />} />
               <Route
                 path="/deleteproduct"
                 element={<ProductTable pageMode="Delete" />}
@@ -75,6 +68,10 @@ function Navigation(props) {
                 element={<ProductTable pageMode="Update" />}
               />
               <Route path="/updateinner" element={<UpdateInner />} />
+              {/* <Route
+                path="/cataloguemanagement"
+                element={<CatalogueManagement />}
+              /> */}
               <Route path="/cms" element={<CMS />} />
               <Route path="/categories" element={<Categories />} />
             </Route>

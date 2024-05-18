@@ -18,137 +18,130 @@ import {
   TreeSelect,
   Upload,
 } from "antd";
+import Creatable from "react-select/creatable";
 import {
   deleteAxiosCall,
   getAxiosCall,
   postAxiosCall,
   updateAxiosCall,
 } from "../../Axios/UniversalAxiosCalls";
-import { SearchOutlined } from "@ant-design/icons";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import Select from "react-select";
 const { TextArea } = Input;
 function GlobalForm(props) {
-  const opt = [
-    {
-      value: "S",
-      label: "Small",
-    },
-    {
-      value: "M",
-      label: "Medium",
-    },
-    {
-      value: "L",
-      label: "Large",
-    },
-    {
-      value: "XL",
-      label: "Extra Large",
-    },
-  ];
-  const shadeOpt = [
-    {
-      value: "Light",
-      label: "Light Skin",
-    },
-    {
-      value: "Dark",
-      label: "Dark Skin",
-    },
-  ];
-  const [inputs, setInputs] = useState({});
-  const [quantity, setQuantity] = useState([]);
-  const [quantityDk, setQuantityDk] = useState([]);
-  const [imageClone, setImageClone] = useState(props?.record?.productImages);
-  const [clothingOptions, setClothingOptions] = useState(null);
-  const [genreOptions, setGenreOptions] = useState(null);
-  const [gender, setGender] = useState(null);
-  const [imageArray, setImageArray] = useState([]);
   const [loading, setLoading] = useState(false);
-  const priceRef = useRef();
-  const quantityRef = useRef();
-  const discount_percentRef = useRef();
+  const [imageArray, setImageArray] = useState([]);
+  const [checkboxValues, setCheckboxValues] = useState();
+  const [inputs, setInputs] = useState({});
+  const [locationOptions, setLocationOptions] = useState();
+  const [boothSizeOptions, setBoothSizeOptions] = useState();
+  const [budgetOptions, setBudgetOptions] = useState();
+  const [imageClone, setImageClone] = useState(props?.record?.pictures);
+
   const NavigateTo = useNavigate();
   useEffect(() => {
-    callCatalogue();
+    callingOptions();
     if (props?.record) {
       setInputs(props.record);
+      const trueFunctionalRequirements = extractTrueFunctionalRequirements(
+        props?.record,
+        options
+      );
+      setCheckboxValues(trueFunctionalRequirements);
     }
   }, []);
-  useEffect(() => {
-    if (
-      Number(priceRef.current.input.value) === inputs?.price ||
-      Number(quantityRef.current?.input?.value) === inputs?.quantity ||
-      Number(discount_percentRef.current.input.value) ===
-        inputs?.discount_percent
-    ) {
-      let _totalPrice = inputs.price;
-      let savings;
-      if (inputs.discount_percent) {
-        savings = (inputs.price * inputs.discount_percent) / 100;
-        _totalPrice = _totalPrice - savings;
-      }
+  function extractTrueFunctionalRequirements(input, options) {
+    const result = [];
 
-      setInputs({
-        ...inputs,
-        savings: savings,
-        totalPrice: _totalPrice,
-      });
-    }
-  }, [inputs?.price, inputs?.discount_percent]);
-  useEffect(() => {
-    setQuantity(props?.record?.quantity?.quantityLight);
-    setQuantityDk(props?.record?.quantity?.quantityDark);
-  }, [props?.record?.quantity]);
-  //To check if the object is empty
-  const isEmpty = () => {
-    for (const prop in inputs) {
-      if (Object.hasOwn(inputs, prop)) {
-        return false;
+    options.forEach((option) => {
+      const key = option.value;
+      if (input[key] === true) {
+        result.push(key);
       }
-    }
-    return true;
-  };
-  useEffect(() => {
-    if (!isEmpty()) {
-      let totalQuant = [
-        {
-          quantityLight: quantity,
-          quantityDark: quantityDk,
-        },
-      ];
-      setInputs({
-        ...inputs,
-        quantity: totalQuant[0],
-      });
-    }
-  }, [quantity, quantityDk]);
+    });
 
-  const callCatalogue = async () => {
-    const getOptions = await getAxiosCall("/catalogue");
-    let clothingOptions = getOptions?.data?.clothingType;
-    let genreOptions = getOptions?.data?.genre;
-    let cg = getOptions?.data?.cg;
-    if (clothingOptions) {
-      const collectClothing = clothingOptions?.map((el) => ({
-        label: el.clothingType,
-        value: el.clothingType,
-      }));
-      const collectGenre = genreOptions?.map((el) => ({
-        label: el.genre,
-        value: el.genre,
-      }));
-      const gender = cg?.map((el) => ({
+    return result;
+  }
+  const callingOptions = async () => {
+    const resLocation = await getAxiosCall("/locationOptions");
+    if (resLocation) {
+      const collection = resLocation.data?.map((el) => ({
         label: el,
         value: el,
       }));
-      setClothingOptions(collectClothing);
-      setGenreOptions(collectGenre);
-      setGender(gender);
+      setLocationOptions(collection);
+    }
+    const resBooth = await getAxiosCall("/boothsizeOptions");
+    if (resBooth) {
+      const collection = resBooth.data?.map((el) => ({
+        label: el,
+        value: el,
+      }));
+      setBoothSizeOptions(collection);
+    }
+    const resBudget = await getAxiosCall("/budgetOptions");
+    if (resBudget) {
+      const collection = resBudget.data?.map((el) => ({
+        label: el,
+        value: el,
+      }));
+      setBudgetOptions(collection);
     }
   };
+  const onChange = (checkedValues) => {
+    setCheckboxValues(checkedValues);
+    // Create an updated inputs object based on checkedValues
+    const updatedInputs = options.reduce((acc, option) => {
+      acc[option.value] = checkedValues.includes(option.value);
+      return acc;
+    }, {});
+    setInputs((prevInputs) => ({
+      ...prevInputs,
+      ...updatedInputs,
+    }));
+  };
+  const options = [
+    {
+      label: "Bar Area",
+      value: "bar_area",
+    },
+    {
+      label: "Hanging sign",
+      value: "hanging_sign",
+    },
+    {
+      label: "LED Video Wall",
+      value: "led_video_wall",
+    },
+    {
+      label: "Lounge Area",
+      value: "longue_area",
+    },
+    {
+      label: "Product Display",
+      value: "product_display",
+    },
+    {
+      label: "Reception Counter",
+      value: "reception_counter",
+    },
+    {
+      label: "Semi Closed Meeting Area",
+      value: "semi_closed_meeting_area",
+    },
+    {
+      label: "Storage Room",
+      value: "storage_room",
+    },
+    {
+      label: "Theatre Style Demo",
+      value: "theatre_style_demo",
+    },
+    {
+      label: "Touch Screen Kiosk",
+      value: "touch_screen_kiosk",
+    },
+  ];
   const getBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -165,10 +158,10 @@ function GlobalForm(props) {
           const base64String = await getBase64(imageArray[i]?.originFileObj);
           B64Array.push(base64String);
         }
-        let dummyObj = { productImages: [...B64Array] };
+        let dummyObj = { pictures: [...B64Array] };
 
-        asd = Object.assign(inputs, { productImages: dummyObj?.productImages });
-        setInputs({ ...inputs, productImages: asd });
+        asd = Object.assign(inputs, { pictures: dummyObj?.pictures });
+        setInputs({ ...inputs, pictures: asd });
       }
     } else {
       if (imageArray?.length != 0) {
@@ -178,55 +171,102 @@ function GlobalForm(props) {
           const base64String = await getBase64(imageArray[i]?.originFileObj);
           B64Array.push(base64String);
         }
-        let dummyObj = [...(inputs && inputs?.productImages)];
+        let dummyObj = [...(inputs && inputs?.pictures)];
 
         dummyObj = [...dummyObj, ...B64Array];
-        asd = Object.assign(inputs, { productImages: dummyObj });
-        setInputs({ ...inputs, productImages: asd });
+        asd = Object.assign(inputs, { pictures: dummyObj });
+        setInputs({ ...inputs, pictures: asd });
       }
     }
   };
-
-  const submit = async () => {
-    if (
-      inputs?.productImages?.length === 0 ||
-      !inputs?.productImages ||
-      inputs?.productImages == undefined
-    ) {
+  const submitForm = async () => {
+    if (!inputs?.location || !inputs?.booth_size || !inputs?.budget) {
       Swal.fire({
         title: "error",
-        text: "Images Required",
+        text: "Location, Booth Size and Budget are mandatory fields",
         icon: "error",
         confirmButtonText: "Alright!",
         allowOutsideClick: false,
       });
       return;
     }
-    if (!inputs.hasOwnProperty("productImages")) {
-      Swal.fire({
-        title: "Error",
-        text: "Please Upload Images",
-        icon: "error",
-        confirmButtonText: "ok",
-        allowOutsideClick: false,
-      });
-      return;
-    }
     try {
-      const answer = await postAxiosCall("/products/createProduct", inputs);
-      if (answer) {
-        Swal.fire({
-          title: "Success",
-          text: answer?.message,
-          icon: "success",
-          confirmButtonText: "Great!",
-          allowOutsideClick: false,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            setInputs();
-            window.location.reload();
+      switch (props.pageMode) {
+        case "Add":
+          if (imageArray.length == 0) {
+            Swal.fire({
+              title: "error",
+              text: "Add at least one Picture to proceed!",
+              icon: "error",
+              confirmButtonText: "Alright!",
+              allowOutsideClick: false,
+            });
+            return;
           }
-        });
+          // Converting images to base64
+          await convertAllToBase64();
+          const answer = await postAxiosCall("/createproduct", inputs);
+          if (answer) {
+            Swal.fire({
+              title: "Success",
+              text: answer?.message,
+              icon: "success",
+              confirmButtonText: "Great!",
+              allowOutsideClick: false,
+            }).then(() => {
+              window.location.reload(true);
+            });
+            setInputs({});
+          }
+          break;
+        case "Update":
+          if (imageArray.length == 0 && imageClone.length == 0) {
+            Swal.fire({
+              title: "error",
+              text: "Add at least one Picture to proceed!",
+              icon: "error",
+              confirmButtonText: "Alright!",
+              allowOutsideClick: false,
+            });
+            return;
+          }
+          //merging the new images (if uploaded)
+          await convertAllToBase64();
+
+          const updatedResult = await updateAxiosCall(
+            "/products",
+            props?.record?.prd_id,
+            inputs
+          );
+          if (updatedResult) {
+            Swal.fire({
+              title: "Success",
+              text: updatedResult?.message,
+              icon: "success",
+              confirmButtonText: "Great!",
+              allowOutsideClick: false,
+            }).then(() => {
+              setInputs();
+              NavigateTo("/updateproduct");
+            });
+          }
+          break;
+        case "Delete":
+          Swal.fire({
+            title: "info",
+            text: "Are You Sure You want to Delete This Product",
+            icon: "info",
+            confirmButtonText: "Delete",
+            showCancelButton: true,
+            allowOutsideClick: false,
+          }).then((result) => {
+            if (result.isConfirmed) {
+              remove();
+            }
+          });
+          break;
+        default:
+          break;
       }
     } catch (error) {
       Swal.fire({
@@ -239,7 +279,7 @@ function GlobalForm(props) {
     }
   };
   const remove = async () => {
-    const answer = await postAxiosCall("/products/deleteProduct", inputs);
+    const answer = await deleteAxiosCall("/products", props?.record?.prd_id);
     if (answer) {
       Swal.fire({
         title: "Success",
@@ -252,222 +292,10 @@ function GlobalForm(props) {
       NavigateTo("/deleteproduct");
     }
   };
-  const update = async () => {
-    if (
-      inputs?.productImages?.length === 0 ||
-      !inputs?.productImages ||
-      inputs?.productImages == undefined
-    ) {
-      Swal.fire({
-        title: "error",
-        text: "Images Required",
-        icon: "error",
-        confirmButtonText: "Alright!",
-        allowOutsideClick: false,
-      });
-      return;
-    }
-
-    const answer = await postAxiosCall("/products/updateProduct", inputs);
-    if (answer) {
-      Swal.fire({
-        title: "Success",
-        text: answer?.message,
-        icon: "success",
-        confirmButtonText: "Great!",
-        allowOutsideClick: false,
-      });
-      setInputs();
-      NavigateTo("/updateproduct");
-    }
-  };
-  const askModal = async () => {
-    for (const key in inputs) {
-      if (Object.hasOwnProperty.call(inputs, key)) {
-        if (
-          typeof inputs[key] === "number" &&
-          inputs[key] === 0 &&
-          key != "discount_percent" &&
-          key != "sales" &&
-          key != "__v"
-        ) {
-          Swal.fire({
-            title: "Error",
-            text: `${key} can not be zero`,
-            icon: "error",
-            confirmButtonText: "OK",
-            allowOutsideClick: false,
-          });
-          return;
-        }
-      }
-    }
-    switch (props.pageMode) {
-      case "Add":
-        if (!quantity && !quantityDk) {
-          return Swal.fire({
-            title: "Error",
-            text: "Please Enter Quantity",
-            icon: "error",
-            confirmButtonText: "ok",
-            allowOutsideClick: false,
-          });
-        }
-        let isEmptyObject_Li;
-        let isEmptyObject_Dk;
-        let allValuesAreZero_Li;
-        let allValuesAreZero_Dk;
-        if (quantity) {
-          isEmptyObject_Li = Object.keys(quantity)?.length === 0;
-          // Check if all values are zero
-          allValuesAreZero_Li = Object.values(quantity)?.every(
-            (value) => value === 0
-          );
-        }
-        if (quantityDk) {
-          isEmptyObject_Dk = Object.keys(quantityDk)?.length === 0;
-          allValuesAreZero_Dk = Object.values(quantityDk)?.every(
-            (value) => value === 0
-          );
-          if (
-            isEmptyObject_Li ||
-            (allValuesAreZero_Li && isEmptyObject_Dk) ||
-            allValuesAreZero_Dk
-          ) {
-            return Swal.fire({
-              title: "Error",
-              text: "Please Enter Quantity",
-              icon: "error",
-              confirmButtonText: "ok",
-              allowOutsideClick: false,
-            });
-          }
-        }
-
-        if (!inputs.hasOwnProperty("clothingType")) {
-          Swal.fire({
-            title: "Error",
-            text: "Please select a Clothing Type",
-            icon: "error",
-            confirmButtonText: "ok",
-            allowOutsideClick: false,
-          });
-          return;
-        }
-        if (!inputs.hasOwnProperty("genre")) {
-          Swal.fire({
-            title: "Error",
-            text: "Please select a Genre",
-            icon: "error",
-            confirmButtonText: "ok",
-            allowOutsideClick: false,
-          });
-          return;
-        }
-        if (!inputs.hasOwnProperty("gender")) {
-          Swal.fire({
-            title: "Error",
-            text: "Please select a Clothing fit",
-            icon: "error",
-            confirmButtonText: "ok",
-            allowOutsideClick: false,
-          });
-          return;
-        }
-        await convertAllToBase64();
-        Swal.fire({
-          title: "info",
-          text: "Are You Sure You want to Add This Data",
-          icon: "info",
-          confirmButtonText: "Confirm",
-          showCancelButton: true,
-          allowOutsideClick: false,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            submit();
-          }
-        });
-        break;
-      case "Delete":
-        Swal.fire({
-          title: "info",
-          text: "Are You Sure You want to Delete This Product",
-          icon: "info",
-          confirmButtonText: "Delete",
-          showCancelButton: true,
-          allowOutsideClick: false,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            remove();
-          }
-        });
-        break;
-      case "Update":
-        let isEmptyObject_Li_Update;
-        let isEmptyObject_Dk_Update;
-        let allValuesAreZero_Li_Update;
-        let allValuesAreZero_Dk_Update;
-        let count = 0;
-
-        if (quantity) {
-          isEmptyObject_Li_Update = Object.keys(quantity)?.length === 0;
-          if (!isEmptyObject_Li_Update) {
-            // Check if all values are zero
-            allValuesAreZero_Li_Update = Object.values(quantity)?.every(
-              (value) => value === 0
-            );
-          }
-          if (allValuesAreZero_Li_Update) {
-            count++;
-          }
-        } else {
-          count++;
-        }
-        if (quantityDk) {
-          isEmptyObject_Dk_Update = Object.keys(quantityDk)?.length === 0;
-          if (!isEmptyObject_Dk_Update) {
-            allValuesAreZero_Dk_Update = Object.values(quantityDk)?.every(
-              (value) => value === 0
-            );
-          }
-          if (allValuesAreZero_Dk_Update) {
-            count++;
-          }
-        } else {
-          count++;
-        }
-        if (count == 2) {
-          return Swal.fire({
-            title: "Error",
-            text: "Please Enter Quantity",
-            icon: "error",
-            confirmButtonText: "ok",
-            allowOutsideClick: false,
-          });
-        }
-        await convertAllToBase64();
-        Swal.fire({
-          title: "info",
-          text: "Are You Sure You want to Add This Data",
-          icon: "info",
-          confirmButtonText: "Confirm",
-          showCancelButton: true,
-          allowOutsideClick: false,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            console.log("inputs", inputs);
-            update();
-          }
-        });
-        break;
-      default:
-        break;
-    }
-  };
   const deleteImage = async (imageIndex) => {
-    const dupli = inputs?.productImages;
+    const dupli = inputs?.pictures;
     dupli?.splice(imageIndex, 1);
-    setInputs({ ...inputs, productImages: dupli });
+    setInputs({ ...inputs, pictures: dupli });
   };
   const deleteModal = (index) => {
     Swal.fire({
@@ -487,36 +315,10 @@ function GlobalForm(props) {
     <PageWrapper title={`${props?.pageMode} Product`}>
       <div className="container mx-auto p-4 text-xl">
         <Spin spinning={loading}>
-          <Form onFinish={askModal}>
+          <Form onFinish={submitForm}>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  SKU
-                </label>
-                <Input
-                  disabled={props?.pageMode !== "Add" ? true : false}
-                  required
-                  type="text"
-                  id="sku"
-                  name="sku"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  onChange={(e) => {
-                    setInputs({
-                      ...inputs,
-                      [e.target.name]: e.target.value.toUpperCase(),
-                    });
-                  }}
-                  value={inputs?.sku}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="text"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Product Name
                 </label>
                 <Input
@@ -525,9 +327,10 @@ function GlobalForm(props) {
                       ? true
                       : false
                   }
-                  type="text"
                   required
-                  name="name"
+                  type="text"
+                  id="product_name"
+                  name="product_name"
                   className="mt-1 p-2 block w-full border rounded-md"
                   onChange={(e) => {
                     setInputs({
@@ -535,324 +338,176 @@ function GlobalForm(props) {
                       [e.target.name]: e.target.value,
                     });
                   }}
-                  value={inputs?.name}
+                  value={inputs?.product_name}
                 />
               </div>
-              <div>
-                <label
-                  htmlFor="text"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Title
-                </label>
-                <Input
-                  disabled={
-                    props?.pageMode === "Delete" || props?.pageMode === "View"
-                      ? true
-                      : false
-                  }
-                  required
-                  type="text"
-                  id="title"
-                  name="title"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  onChange={(e) => {
-                    setInputs({
-                      ...inputs,
-                      [e.target.name]: e.target.value,
-                    });
-                  }}
-                  value={inputs?.title}
-                />
-              </div>
+
               <div>
                 <label
                   htmlFor="name"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Type of Clothing
+                  Location (City,Country)
                 </label>
-                <select
-                  required
-                  onChange={(e) => {
-                    setInputs({ ...inputs, clothingType: e.target.value });
-                  }}
+                <Creatable
                   isDisabled={
                     props?.pageMode === "Delete" || props?.pageMode === "View"
                       ? true
                       : false
                   }
-                  size="large"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  name="clothingType"
-                  value={inputs?.clothingType}
-                >
-                  {clothingOptions?.map((el) => {
-                    return (
-                      <>
-                        <option value="" selected disabled hidden>
-                          Choose here
-                        </option>
-                        <option value={el.value}>{el.label}</option>
-                      </>
-                    );
-                  })}
-                </select>
-              </div>
-              <div>
-                <label
-                  htmlFor="text"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Genre
-                </label>
-                <select
-                  placeholder="The Theme of the Tattoo"
+                  placeholder="Location"
                   required
+                  isMulti={false}
                   onChange={(e) => {
-                    setInputs({ ...inputs, genre: e.target.value });
+                    setInputs({ ...inputs, location: e.value });
                   }}
+                  isClearable
+                  options={locationOptions?.length != 0 ? locationOptions : []}
+                  isSearchable
+                  value={{ label: inputs?.location, value: inputs?.location }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Booth Size (For eg: 10X20)
+                </label>
+                <Creatable
                   isDisabled={
                     props?.pageMode === "Delete" || props?.pageMode === "View"
                       ? true
                       : false
                   }
-                  size="large"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  name="genre"
-                  value={inputs?.genre}
-                >
-                  {genreOptions?.map((el) => {
-                    return (
-                      <>
-                        <option value="" selected disabled hidden>
-                          Choose here
-                        </option>
-                        <option value={el.value}>{el.label}</option>
-                      </>
-                    );
-                  })}
-                </select>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="number"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Price per Unit in Rupees
-                </label>
-                <Input
-                  disabled={
-                    props?.pageMode === "Delete" || props?.pageMode === "View"
-                      ? true
-                      : false
-                  }
+                  placeholder="Booth Size"
                   required
-                  ref={priceRef}
-                  type="number"
-                  id="price"
-                  name="price"
-                  className="mt-1 p-2 block w-full border rounded-md"
+                  isMulti={false}
                   onChange={(e) => {
                     setInputs({
                       ...inputs,
-                      [e.target.name]: Number(e.target.value),
+                      booth_size: e.value?.toUpperCase(),
                     });
                   }}
-                  value={inputs?.price}
+                  isClearable
+                  options={
+                    boothSizeOptions?.length != 0 ? boothSizeOptions : []
+                  }
+                  isSearchable
+                  value={{
+                    label: inputs?.booth_size?.toUpperCase(),
+                    value: inputs?.booth_size?.toUpperCase(),
+                  }}
                 />
               </div>
-              <div>
-                <label
-                  htmlFor="number"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Quantity - Light Skin Shade
-                </label>
 
-                {opt?.map((el) => {
-                  return (
-                    <Space.Compact>
-                      <Input
-                        style={{
-                          width: "40%",
-                        }}
-                        defaultValue={el.label}
-                        disabled
-                        value={el?.label}
-                      />
-                      <InputNumber
-                        style={{
-                          width: "60%",
-                        }}
-                        defaultValue="0"
-                        disabled={
-                          props?.pageMode === "Delete" ||
-                          props?.pageMode === "View"
-                            ? true
-                            : false
-                        }
-                        name={el.value}
-                        onChange={(e) => {
-                          let asd = {
-                            ...quantity,
-                            [el.value]: Number(e),
-                          };
-                          setQuantity(asd);
-                        }}
-                        value={quantity?.[el.value]}
-                      />
-                    </Space.Compact>
-                  );
-                })}
-              </div>
               <div>
-                <label
-                  htmlFor="number"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Quantity - Dark Skin Shade
+                <label className="block text-sm font-medium text-gray-700">
+                  Budget Range (in US$)
                 </label>
-                {opt?.map((el) => {
-                  return (
-                    <Space.Compact>
-                      <Input
-                        style={{
-                          width: "40%",
-                        }}
-                        defaultValue={el.label}
-                        disabled
-                        value={el?.label}
-                      />
-                      <InputNumber
-                        style={{
-                          width: "60%",
-                        }}
-                        ty
-                        defaultValue="0"
-                        disabled={
-                          props?.pageMode === "Delete" ||
-                          props?.pageMode === "View"
-                            ? true
-                            : false
-                        }
-                        name={el.value}
-                        onChange={(e) => {
-                          let asd = {
-                            ...quantityDk,
-                            [el.value]: Number(e),
-                          };
-                          setQuantityDk(asd);
-                        }}
-                        value={quantityDk?.[el.value]}
-                      />
-                    </Space.Compact>
-                  );
-                })}
+                <Creatable
+                  isDisabled={
+                    props?.pageMode === "Delete" || props?.pageMode === "View"
+                      ? true
+                      : false
+                  }
+                  placeholder="Budget"
+                  required
+                  isMulti={false}
+                  onChange={(e) => {
+                    setInputs({ ...inputs, budget: e.value?.toUpperCase() });
+                  }}
+                  isClearable
+                  options={budgetOptions?.length != 0 ? budgetOptions : []}
+                  isSearchable
+                  value={{
+                    label: inputs?.budget?.toUpperCase(),
+                    value: inputs?.budget?.toUpperCase(),
+                  }}
+                />
               </div>
 
               <div>
-                <label
-                  htmlFor="number"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Discount in % (per Unit)
+                <label className="block text-sm font-medium text-gray-700">
+                  Closed Meeting Room
                 </label>
-                <Input
+                <InputNumber
                   disabled={
                     props?.pageMode === "Delete" || props?.pageMode === "View"
                       ? true
                       : false
                   }
-                  type="number"
-                  id="discount_percent"
-                  name="discount_percent"
-                  ref={discount_percentRef}
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  onChange={(e) => {
-                    setInputs({
-                      ...inputs,
-                      [e.target.name]: Number(e.target.value),
-                    });
-                  }}
-                  value={inputs?.discount_percent}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="number"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Total Price per Unit
-                </label>
-                <Input
-                  disabled={true}
-                  required
-                  type="number"
-                  id="totalPrice"
-                  name="totalPrice"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  value={inputs?.totalPrice}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="number"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Savings per Unit
-                </label>
-                <Input
-                  disabled={true}
-                  required
-                  type="number"
-                  id="savings"
-                  name="savings"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                  value={inputs?.savings ? inputs?.savings : 0}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="number"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Gender{" "}
-                </label>
-                <select
-                  disabled={
-                    props?.pageMode === "Delete" || props?.pageMode === "View"
-                      ? true
-                      : false
-                  }
-                  required
-                  value={inputs?.gender}
-                  onChange={(e) => {
-                    setInputs({ ...inputs, gender: e.target.value });
-                  }}
-                  name="gender"
                   size="large"
-                  className="mt-1 p-2 block w-full border rounded-md"
-                >
-                  {gender?.map((el) => {
-                    return (
-                      <>
-                        <option value="" selected disabled hidden>
-                          Choose here
-                        </option>
-                        <option value={el.value}>{el.label}</option>
-                      </>
-                    );
-                  })}
-                </select>
+                  className="w-full rounded-md"
+                  min={1}
+                  max={10}
+                  onChange={(e) => {
+                    setInputs({ ...inputs, closed_meeting_room: e });
+                  }}
+                  value={inputs?.closed_meeting_room}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Number of Demo Stations
+                </label>
+                <InputNumber
+                  disabled={
+                    props?.pageMode === "Delete" || props?.pageMode === "View"
+                      ? true
+                      : false
+                  }
+                  size="large"
+                  className="w-full rounded-md"
+                  min={1}
+                  max={10}
+                  onChange={(e) => {
+                    setInputs({ ...inputs, demo_stations: e });
+                  }}
+                  value={inputs?.demo_stations}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Open Discussion Areas
+                </label>
+                <InputNumber
+                  disabled={
+                    props?.pageMode === "Delete" || props?.pageMode === "View"
+                      ? true
+                      : false
+                  }
+                  size="large"
+                  className="w-full rounded-md"
+                  min={1}
+                  max={10}
+                  onChange={(e) => {
+                    setInputs({ ...inputs, open_discussion_area: e });
+                  }}
+                  value={inputs?.open_discussion_area}
+                />
               </div>
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Filter by Functional Requirements
+              </label>
+              <br />
+              <Checkbox.Group
+                disabled={
+                  props?.pageMode === "Delete" || props?.pageMode === "View"
+                    ? true
+                    : false
+                }
+                options={options}
+                onChange={onChange}
+                value={checkboxValues}
+              />
+              <br />
+            </div>
             <div className="my-5">
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label className="block text-sm font-medium text-gray-700">
                 Description
               </label>
               <TextArea
@@ -871,15 +526,6 @@ function GlobalForm(props) {
                 }}
                 value={inputs?.description}
               />
-            </div>
-            <div className="my-5">
-              <label
-                htmlFor="name"
-                className="block text-7xl font-semibold text-gray-700"
-              >
-                Sales
-              </label>
-              {inputs.sales ? inputs.sales : 0}
             </div>
             {/* Upload Pictures */}
             {props.pageMode === "Add" || props.pageMode === "Update" ? (
@@ -930,11 +576,7 @@ function GlobalForm(props) {
                   {imageClone?.map((el, index) => (
                     <div className="card" key={index}>
                       <div className="flex h-60 justify-center">
-                        <img
-                          src={el?.url}
-                          alt="asd4e"
-                          className="object-contain"
-                        />
+                        <img src={el} alt="asd4e" className="object-contain" />
                       </div>
                       {props.pageMode !== "View" &&
                       props.pageMode !== "Delete" ? (
@@ -962,13 +604,45 @@ function GlobalForm(props) {
             ) : (
               <div className="acitonButtons w-full flex justify-center">
                 <button
-                  className="my-4 text-black p-4 font-semibold hover:bg-orange-400 hover:text-white rounded-lg bg-indigo-200"
+                  className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out items-center justify-center"
                   type="submit"
                 >
                   {props.pageMode} Data
                 </button>
               </div>
             )}
+            {/* <div className="my-5">
+              <label className="block text-sm font-medium text-gray-700">
+                Upload Pictures
+              </label>
+              <Upload
+                action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                listType="picture-card"
+                multiple={true}
+                name="productImages"
+                fileList={imageArray}
+                maxCount={4}
+                onChange={(e) => {
+                  setImageArray(e.fileList);
+                }}
+              >
+                <div>
+                  <PlusOutlined />
+                  <div
+                    style={{
+                      marginTop: 8,
+                    }}
+                  >
+                    Upload
+                  </div>
+                </div>
+              </Upload>
+            </div>
+            <div className="flex justify-center">
+              <button className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out items-center justify-center">
+                {props?.pageMode} Data
+              </button>
+            </div> */}
           </Form>
         </Spin>
       </div>

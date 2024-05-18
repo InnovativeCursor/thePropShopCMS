@@ -43,10 +43,27 @@ exports.getBoothSizeOptions = async (req, res) => {
           "booth_size",
         ],
       ],
-      order: [["booth_size", "ASC"]],
     });
 
-    const boothSizeList = boothSizes.map((size) => size.booth_size);
+    const boothSizeList = boothSizes.map((boothSize) =>
+      boothSize.get("booth_size")
+    );
+
+    // Function to extract the numeric parts of the booth size
+    const parseBoothSize = (boothSize) => {
+      const match = boothSize.match(/(\d+)x(\d+)/i);
+      if (match) {
+        return [parseInt(match[1], 10), parseInt(match[2], 10)];
+      }
+      return [0, 0];
+    };
+
+    // Sort boothSizeList based on the parsed numeric values
+    boothSizeList.sort((a, b) => {
+      const [aWidth, aHeight] = parseBoothSize(a);
+      const [bWidth, bHeight] = parseBoothSize(b);
+      return aWidth - bWidth || aHeight - bHeight;
+    });
 
     res.status(200).json(boothSizeList);
   } catch (error) {
@@ -55,7 +72,6 @@ exports.getBoothSizeOptions = async (req, res) => {
       .json({ message: "Failed to fetch booth sizes", error: error.message });
   }
 };
-
 exports.getBudgetOptions = async (req, res) => {
   try {
     const budgets = await Product.findAll({
@@ -65,10 +81,18 @@ exports.getBudgetOptions = async (req, res) => {
           "budget",
         ],
       ],
-      order: [["budget", "ASC"]],
     });
 
-    const budgetList = budgets.map((budget) => budget.budget);
+    const budgetList = budgets.map((budget) => budget.get("budget"));
+
+    // Function to extract the numeric part of the budget range
+    const parseBudget = (budget) => {
+      const match = budget.match(/(\d+)/);
+      return match ? parseInt(match[0], 10) : 0;
+    };
+
+    // Sort budgetList based on the parsed numeric values
+    budgetList.sort((a, b) => parseBudget(a) - parseBudget(b));
 
     res.status(200).json(budgetList);
   } catch (error) {
@@ -77,6 +101,7 @@ exports.getBudgetOptions = async (req, res) => {
       .json({ message: "Failed to fetch budgets", error: error.message });
   }
 };
+
 exports.createProduct = async (req, res) => {
   const {
     product_name,
@@ -126,5 +151,43 @@ exports.createProduct = async (req, res) => {
     res
       .status(500)
       .json({ message: "Failed to create product", error: error.message });
+  }
+};
+// Update a product
+exports.updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    const product = await Product.findByPk(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    await product.update(updatedData);
+    res.status(200).json({ message: "Product updated successfully", product });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to update product", error: error.message });
+  }
+};
+
+// Delete a product
+exports.deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await Product.findByPk(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    await product.destroy();
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to delete product", error: error.message });
   }
 };

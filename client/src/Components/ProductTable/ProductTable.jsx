@@ -8,53 +8,41 @@ import { useNavigate } from "react-router-dom";
 function ProductTable(props) {
   const columns = [
     {
-      title: "Sku",
-      dataIndex: "sku",
-      key: "sku",
+      title: "Prd ID",
+      dataIndex: "prd_id",
+      key: "prd_id",
       fixed: "left",
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Exhibition Name",
+      dataIndex: "product_name",
+      key: "product_name",
     },
     {
-      title: "Gender",
-      dataIndex: "gender",
-      key: "gender",
+      title: "Location",
+      dataIndex: "location",
+      key: "location",
     },
     {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
+      title: "Booth Size",
+      dataIndex: "booth_size",
+      key: "booth_size",
     },
     {
-      title: "Genre",
-      dataIndex: "genre",
-      key: "genre",
-    },
-    {
-      title: "Discount (%)",
-      dataIndex: "discount_percent",
-      key: "discount_percent",
-    },
-    {
-      title: "Sales",
-      dataIndex: "sales",
-      key: "sales",
+      title: "Budget",
+      dataIndex: "budget",
+      key: "budget",
     },
   ];
   const [result, setResult] = useState(null);
   const [switchRoutes, setSwitchRoutes] = useState(false);
   const navigateTo = useNavigate();
   useEffect(() => {
-    //Use Effect is being called twice
-
     answer();
   }, []);
   const answer = async () => {
     const result = await getAxiosCall("/products");
-    setResult(result.data);
+    setResult(result.data?.products);
   };
   return (
     <PageWrapper title={`${props.pageMode} Products`}>
@@ -62,9 +50,9 @@ function ProductTable(props) {
         columns={columns}
         dataSource={result}
         size="large"
-        style={{
-          width: "100rem",
-        }}
+        // style={{
+        //   width: "100rem",
+        // }}
         onRow={(record, rowIndex) => {
           return {
             onClick: () => {
@@ -80,8 +68,8 @@ function ProductTable(props) {
           };
         }}
         scroll={{
-          x: 1500,
-          y: 1000,
+          x: 1000,
+          y: 1500,
         }}
       />
     </PageWrapper>
