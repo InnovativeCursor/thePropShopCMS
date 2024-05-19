@@ -11,21 +11,9 @@ router.post("/login", userController.login);
 router.get("/users", authenticateUser, userController.allUsers);
 
 //For Selectable Options
-router.get(
-  "/locationOptions",
-  authenticateUser,
-  productController.getLocationOptions
-);
-router.get(
-  "/budgetOptions",
-  authenticateUser,
-  productController.getBudgetOptions
-);
-router.get(
-  "/boothsizeOptions",
-  authenticateUser,
-  productController.getBoothSizeOptions
-);
+router.get("/locationOptions", productController.getLocationOptions);
+router.get("/budgetOptions", productController.getBudgetOptions);
+router.get("/boothsizeOptions", productController.getBoothSizeOptions);
 // Product routes
 router.get("/products", authenticateUser, productController.getProducts);
 router.post(
