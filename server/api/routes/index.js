@@ -8,6 +8,8 @@ const authenticateUser = require("../middleware/authenticateUser");
 // User routes
 router.post("/signup", userController.signup);
 router.post("/login", userController.login);
+router.post("/forgotPassword", userController.forgotPassword);
+router.post("/resetPassword", userController.resetPassword);
 router.get("/users", authenticateUser, userController.allUsers);
 
 //For Selectable Options

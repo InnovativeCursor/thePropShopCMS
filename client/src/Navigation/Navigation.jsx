@@ -22,6 +22,7 @@ import CatalogueManagement from "../Components/catalogueManagement/CatalogueMana
 import CMS from "../Components/cms/CMS";
 import Categories from "../Categories/Categories";
 import AddProduct from "../Components/createProd/AddProduct";
+import ResetPassword from "../Components/resetPassword/ResetPassword";
 
 function Navigation(props) {
   const location = useLocation();
@@ -50,6 +51,7 @@ function Navigation(props) {
         <div>
           <Routes>
             <Route path="/" element={<Login />} />
+            <Route path="/reset/:token" element={<ResetPassword />} />
             <Route element={<PrivateRoute />}>
               <Route path="/home" element={<Home />} />
               <Route path="/addproduct" element={<AddProduct />} />
