@@ -5,10 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { setAuthenticationHeader } from "../../utils/Authenticate";
 import { connect } from "react-redux";
-import {
-  postAxiosCall,
-  postAxiosResetPassword,
-} from "../../Axios/UniversalAxiosCalls";
+import { postAxiosCall } from "../../Axios/UniversalAxiosCalls";
 import loginbkg from "../../assets/Images/Loginbkg.webp";
 import CryptoJS from "crypto-js";
 
@@ -53,7 +50,7 @@ function Login(props) {
   };
   const onReset = async () => {
     try {
-      const resetPass = await postAxiosResetPassword("/forgotPassword", {
+      const resetPass = await postAxiosCall("/forgotPassword", {
         email: email,
       });
       if (resetPass) {
