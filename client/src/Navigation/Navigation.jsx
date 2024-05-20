@@ -23,6 +23,7 @@ import CMS from "../Components/cms/CMS";
 import Categories from "../Categories/Categories";
 import AddProduct from "../Components/createProd/AddProduct";
 import ResetPassword from "../Components/resetPassword/ResetPassword";
+import FilterMenu from "../Components/filterMenu/FilterMenu";
 
 function Navigation(props) {
   const location = useLocation();
@@ -70,6 +71,7 @@ function Navigation(props) {
                 element={<ProductTable pageMode="Update" />}
               />
               <Route path="/updateinner" element={<UpdateInner />} />
+              <Route path="/filtermenu" element={<FilterMenu />} />
               {/* <Route
                 path="/cataloguemanagement"
                 element={<CatalogueManagement />}

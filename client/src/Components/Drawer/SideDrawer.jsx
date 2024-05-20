@@ -23,6 +23,10 @@ const menu = [
     text: "View Users",
     link: "/viewusers",
   },
+  {
+    text: "Filter Menu",
+    link: "/filtermenu",
+  },
   // {
   //   text: "Catalogue Management",
   //   link: "/cataloguemanagement",

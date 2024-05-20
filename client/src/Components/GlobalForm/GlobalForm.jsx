@@ -611,38 +611,6 @@ function GlobalForm(props) {
                 </button>
               </div>
             )}
-            {/* <div className="my-5">
-              <label className="block text-sm font-medium text-gray-700">
-                Upload Pictures
-              </label>
-              <Upload
-                action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                listType="picture-card"
-                multiple={true}
-                name="productImages"
-                fileList={imageArray}
-                maxCount={4}
-                onChange={(e) => {
-                  setImageArray(e.fileList);
-                }}
-              >
-                <div>
-                  <PlusOutlined />
-                  <div
-                    style={{
-                      marginTop: 8,
-                    }}
-                  >
-                    Upload
-                  </div>
-                </div>
-              </Upload>
-            </div>
-            <div className="flex justify-center">
-              <button className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out items-center justify-center">
-                {props?.pageMode} Data
-              </button>
-            </div> */}
           </Form>
         </Spin>
       </div>
