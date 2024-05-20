@@ -195,3 +195,37 @@ export let deleteAxiosCall = async (endpoint, id) => {
     return;
   }
 };
+export let postAxiosResetPassword = async (endpoint, data) => {
+  try {
+    store.dispatch({ type: "LOADING", payload: true });
+    const _headers = {
+      Accept: "*/*",
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      host: process.env.REACT_APP_FE_URL,
+    };
+    // Create an Axios instance with default configuration
+    const instance = axios.create({
+      baseURL: process.env.REACT_APP_UAT_URL, // Your API's base URL
+      headers: {
+        "Content-Type": "application/json", // Default content type (you can customize this)
+        ..._headers, // Merge custom headers with default headers
+      },
+      // ...config, // Additional Axios request configuration
+    });
+    // Make the request using the provided body and endpoint
+    const response = await instance.post(endpoint, data);
+    // Return the response
+    store.dispatch({ type: "LOADING", payload: false });
+    return response.data;
+  } catch (error) {
+    store.dispatch({ type: "LOADING", payload: false });
+    Swal.fire({
+      title: "Error",
+      text: error?.response?.data?.message,
+      icon: "error",
+      confirmButtonText: "Alright!",
+      allowOutsideClick: false,
+    });
+    return;
+  }
+};

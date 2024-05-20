@@ -24,5 +24,11 @@ const User = sequelize.define("User", {
   role_id: {
     type: DataTypes.INTEGER,
   },
+  resetPasswordToken: {
+    type: DataTypes.STRING,
+  },
+  resetPasswordExpires: {
+    type: DataTypes.DATE,
+  },
 });
 module.exports = User;
