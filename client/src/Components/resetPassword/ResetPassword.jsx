@@ -41,7 +41,7 @@ function ResetPassword() {
         resetToken: token,
         newPassword: password,
       });
-      debugger;
+
       if (response) {
         Swal.fire({
           title: "Error",
@@ -50,7 +50,6 @@ function ResetPassword() {
           confirmButtonText: "Alright!",
           allowOutsideClick: false,
         }).then(() => {
-          debugger;
           NavigateTo("/");
         });
       }
