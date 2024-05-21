@@ -75,11 +75,12 @@ function FilterMenu() {
     }
     const resBudget = await getAxiosCall("/budgetOptions");
     if (resBudget) {
-      const collection = resBudget.data?.map((el) => ({
-        label: el,
-        value: el,
-      }));
-      setBudgetOptions(collection);
+      debugger;
+      // const collection = resBudget.data?.map((el) => ({
+      //   label: el,
+      //   value: el,
+      // }));
+      setBudgetOptions(resBudget?.data);
     }
   };
   const onChange = (checkedValues) => {
