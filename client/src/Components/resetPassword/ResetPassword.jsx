@@ -1,19 +1,18 @@
-// components/ResetPassword.js
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { postAxiosCall } from "../../Axios/UniversalAxiosCalls";
-import loginbkg from "../../assets/Images/Loginbkg.webp";
 import { Button, Input } from "antd";
 import Swal from "sweetalert2";
+import logo from "../../assets/Images/propshop_black.svg";
+import background from "../../assets/Images/background.jpg";
 
 function ResetPassword() {
   const { token } = useParams();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
-  const NavigateTo = useNavigate();
+  const navigateTo = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -44,13 +43,13 @@ function ResetPassword() {
 
       if (response) {
         Swal.fire({
-          title: "Error",
+          title: "Success",
           text: response?.message,
           icon: "success",
           confirmButtonText: "Alright!",
           allowOutsideClick: false,
         }).then(() => {
-          NavigateTo("/");
+          navigateTo("/");
         });
       }
     } catch (error) {
@@ -66,50 +65,71 @@ function ResetPassword() {
 
   return (
     <div
-      className="bg-cover h-screen"
-      style={{ backgroundImage: `url(${loginbkg})` }}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        backgroundImage: `url(${background})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        padding: "20px",
+      }}
     >
-      <div className="flex flex-row justify-end align-middle items-center w-full h-screen px-80">
-        <div className="card bg-cyan-400">
-          <div className="flex flex-col justify-center items-center">
-            <div className="text-3xl mb-4 font-semibold">Change Password</div>
-            <div className="credentials card shadow-lg w-96 ">
-              <div className="uName my-4">
-                <div className="password my-4">
-                  <div className="text-xl my-2 font-medium">New Password</div>
-                  <Input
-                    placeholder="Password"
-                    type="password"
-                    size="large"
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                    }}
-                  />
-                </div>
-                <div className="password my-4">
-                  <div className="text-xl my-2 font-medium">
-                    Confirm Password
-                  </div>
-                  <Input
-                    placeholder="Password"
-                    type="password"
-                    size="large"
-                    onChange={(e) => {
-                      setConfirmPassword(e.target.value);
-                    }}
-                  />
-                </div>
-                <div className="flex justify-center items-center flex-row">
-                  <Button
-                    type="primary"
-                    className="text-black"
-                    size="large"
-                    onClick={handleSubmit}
-                  >
-                    Change Password
-                  </Button>
-                </div>
-              </div>
+      <div
+        style={{
+          width: "80%",
+          maxWidth: "500px",
+          padding: "20px",
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderRadius: "10px",
+          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+          backdropFilter: "blur(10px)",
+          webkitBackdropFilter: "blur(10px)",
+          border: "1px solid rgba(255, 255, 255, 0.3)",
+        }}
+      >
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+          <img src={logo} alt="Logo" style={{ width: "150px" }} />
+        </div>
+        <div
+          className="text-3xl mb-4 font-semibold"
+          style={{ textAlign: "center", color: "#000" }}
+        >
+          Change Password
+        </div>
+        <div className="credentials card shadow-lg">
+          <div className="uName my-4">
+            <div className="password my-4">
+              <div className="text-xl my-2 font-medium">New Password</div>
+              <Input
+                placeholder="Password"
+                type="password"
+                size="large"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="password my-4">
+              <div className="text-xl my-2 font-medium">Confirm Password</div>
+              <Input
+                placeholder="Password"
+                type="password"
+                size="large"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+            <div className="flex justify-center items-center flex-row mt-6">
+              <Button
+                type="primary"
+                className="flex text-white bg-black justify-around items-center flex-row"
+                size="large"
+                style={{
+                  width: "45%",
+                }}
+                onClick={handleSubmit}
+              >
+                Change Password
+              </Button>
             </div>
           </div>
         </div>
