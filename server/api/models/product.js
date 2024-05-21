@@ -11,9 +11,18 @@ const Product = sequelize.define("Product", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  location: DataTypes.STRING,
-  booth_size: DataTypes.STRING,
-  budget: DataTypes.STRING,
+  location: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  booth_size: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  budget: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
   closed_meeting_room: DataTypes.INTEGER,
   demo_stations: DataTypes.INTEGER,
   open_discussion_area: DataTypes.INTEGER,

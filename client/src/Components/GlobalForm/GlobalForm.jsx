@@ -25,6 +25,7 @@ import {
   postAxiosCall,
   updateAxiosCall,
 } from "../../Axios/UniversalAxiosCalls";
+
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 const { TextArea } = Input;
@@ -330,6 +331,7 @@ function GlobalForm(props) {
                   required
                   type="text"
                   id="product_name"
+                  placeholder="Product Name"
                   name="product_name"
                   className="mt-1 p-2 block w-full border rounded-md"
                   onChange={(e) => {
@@ -401,27 +403,30 @@ function GlobalForm(props) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Budget Range (in US$)
+                  Budget (in US$)
                 </label>
-                <Creatable
-                  isDisabled={
+                <InputNumber
+                  disabled={
                     props?.pageMode === "Delete" || props?.pageMode === "View"
                       ? true
                       : false
                   }
+                  formatter={(value) =>
+                    `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  }
+                  parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                   placeholder="Budget"
+                  className="w-full rounded-md"
+                  size="large"
                   required
                   isMulti={false}
                   onChange={(e) => {
-                    setInputs({ ...inputs, budget: e.value?.toUpperCase() });
+                    setInputs({ ...inputs, budget: e });
                   }}
                   isClearable
                   options={budgetOptions?.length != 0 ? budgetOptions : []}
                   isSearchable
-                  value={{
-                    label: inputs?.budget?.toUpperCase(),
-                    value: inputs?.budget?.toUpperCase(),
-                  }}
+                  value={inputs?.budget}
                 />
               </div>
 
@@ -435,6 +440,7 @@ function GlobalForm(props) {
                       ? true
                       : false
                   }
+                  placeholder="Closed Meeting Room"
                   size="large"
                   className="w-full rounded-md"
                   min={1}
@@ -457,6 +463,7 @@ function GlobalForm(props) {
                       : false
                   }
                   size="large"
+                  placeholder="Demo Stations"
                   className="w-full rounded-md"
                   min={1}
                   max={10}
@@ -478,6 +485,7 @@ function GlobalForm(props) {
                       : false
                   }
                   size="large"
+                  placeholder="Open Discussion Areas"
                   className="w-full rounded-md"
                   min={1}
                   max={10}

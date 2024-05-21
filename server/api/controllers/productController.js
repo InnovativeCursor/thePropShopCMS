@@ -74,26 +74,52 @@ exports.getBoothSizeOptions = async (req, res) => {
 };
 exports.getBudgetOptions = async (req, res) => {
   try {
-    const budgets = await Product.findAll({
-      attributes: [
-        [
-          Product.sequelize.fn("DISTINCT", Product.sequelize.col("budget")),
-          "budget",
-        ],
-      ],
-    });
+    // const budgets = await Product.findAll({
+    //   attributes: [
+    //     [
+    //       Product.sequelize.fn("DISTINCT", Product.sequelize.col("budget")),
+    //       "budget",
+    //     ],
+    //   ],
+    // });
 
-    const budgetList = budgets.map((budget) => budget.get("budget"));
+    // const budgetList = budgets.map((budget) => budget.get("budget"));
 
-    // Function to extract the numeric part of the budget range
-    const parseBudget = (budget) => {
-      const match = budget.match(/(\d+)/);
-      return match ? parseInt(match[0], 10) : 0;
-    };
+    // // Function to extract the numeric part of the budget range
+    // const parseBudget = (budget) => {
+    //   const match = budget.match(/(\d+)/);
+    //   return match ? parseInt(match[0], 10) : 0;
+    // };
 
-    // Sort budgetList based on the parsed numeric values
-    budgetList.sort((a, b) => parseBudget(a) - parseBudget(b));
-
+    // // Sort budgetList based on the parsed numeric values
+    // budgetList.sort((a, b) => parseBudget(a) - parseBudget(b));
+    //Hard Coded Options
+    const budgetList = [
+      {
+        label: "$10k - $15k",
+        value: [10000, 15000],
+      },
+      {
+        label: "$15k - $25k",
+        value: [15000, 25000],
+      },
+      {
+        label: "$25k - $35k",
+        value: [25000, 35000],
+      },
+      {
+        label: "$35k - $45k",
+        value: [35000, 45000],
+      },
+      {
+        label: "$45k - $60k",
+        value: [45000, 60000],
+      },
+      {
+        label: "$60k+",
+        value: [60000, Number.MAX_SAFE_INTEGER],
+      },
+    ];
     res.status(200).json(budgetList);
   } catch (error) {
     res
