@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import { connect } from "react-redux";
 import CryptoJS from "crypto-js";
 import background from "../../assets/Images/background.jpg";
-import logo from "../../assets/Images/propshop_black.svg";
+import logo from "../../assets/Images/propshop_black.png";
 import { postAxiosCall } from "../../Axios/UniversalAxiosCalls";
 
 function Login(props) {
