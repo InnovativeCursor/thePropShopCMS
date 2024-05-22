@@ -52,24 +52,27 @@ function GlobalForm(props) {
     }
   }, []);
   useEffect(() => {
-    const trueFunctionalRequirements = extractTrueFunctionalRequirements(
-      props?.record,
-      options
-    );
-    setCheckboxValues(trueFunctionalRequirements);
+    if (props?.record) {
+      const trueFunctionalRequirements = extractTrueFunctionalRequirements(
+        props?.record,
+        options
+      );
+      setCheckboxValues(trueFunctionalRequirements);
+    }
   }, [options]);
 
   function extractTrueFunctionalRequirements(input, options) {
     const result = [];
+    if (options.length != 0) {
+      options.forEach((option) => {
+        const key = option?.value;
+        if (input[key] === true) {
+          result.push(key);
+        }
+      });
 
-    options.forEach((option) => {
-      const key = option.value;
-      if (input[key] === true) {
-        result.push(key);
-      }
-    });
-
-    return result;
+      return result;
+    }
   }
   const callingOptions = async () => {
     const resLocation = await getAxiosCall("/locationOptions");
