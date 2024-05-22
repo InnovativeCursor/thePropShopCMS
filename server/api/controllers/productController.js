@@ -1,9 +1,60 @@
 // controllers/productController.js
 const Product = require("../models/product");
-
+const { Op } = require("sequelize");
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.findAll({});
+    // Get query parameters
+    const {
+      location,
+      booth_size,
+      budget,
+      closed_meeting_room,
+      demo_stations,
+      open_discussion_area,
+      ...functionalReq
+    } = req.query;
+
+    // Construct the filter object
+    let filter = {};
+
+    if (location) filter.location = location;
+    if (booth_size) filter.booth_size = booth_size;
+    // if (budget) {
+    //   const [minBudget, maxBudget] = budget.split("-").map(Number);
+    //   filter.budget = {
+    //     [Op.between]: [minBudget, maxBudget],
+    //   };
+    // }
+    // Handle budget filter
+    if (budget) {
+      let budgetRange;
+      try {
+        budgetRange = JSON.parse(budget); // Parse the JSON string
+      } catch (e) {
+        return res.status(400).json({ message: "Invalid budget format" });
+      }
+
+      if (Array.isArray(budgetRange) && budgetRange.length === 2) {
+        filter.budget = {
+          [Op.between]: [budgetRange[0], budgetRange[1]],
+        };
+      } else {
+        return res.status(400).json({ message: "Invalid budget range" });
+      }
+    }
+    if (closed_meeting_room) filter.closed_meeting_room = closed_meeting_room;
+    if (demo_stations) filter.demo_stations = demo_stations;
+    if (open_discussion_area)
+      filter.open_discussion_area = open_discussion_area;
+
+    // Add functional requirements to the filter
+    Object.keys(functionalReq).forEach((key) => {
+      if (functionalReq[key] === "true") {
+        filter[key] = true;
+      }
+    });
+
+    const products = await Product.findAll({ where: filter });
     res.status(200).json({ products });
   } catch (error) {
     res
@@ -74,26 +125,6 @@ exports.getBoothSizeOptions = async (req, res) => {
 };
 exports.getBudgetOptions = async (req, res) => {
   try {
-    // const budgets = await Product.findAll({
-    //   attributes: [
-    //     [
-    //       Product.sequelize.fn("DISTINCT", Product.sequelize.col("budget")),
-    //       "budget",
-    //     ],
-    //   ],
-    // });
-
-    // const budgetList = budgets.map((budget) => budget.get("budget"));
-
-    // // Function to extract the numeric part of the budget range
-    // const parseBudget = (budget) => {
-    //   const match = budget.match(/(\d+)/);
-    //   return match ? parseInt(match[0], 10) : 0;
-    // };
-
-    // // Sort budgetList based on the parsed numeric values
-    // budgetList.sort((a, b) => parseBudget(a) - parseBudget(b));
-    //Hard Coded Options
     const budgetList = [
       {
         label: "$10k - $15k",
@@ -127,7 +158,97 @@ exports.getBudgetOptions = async (req, res) => {
       .json({ message: "Failed to fetch budgets", error: error.message });
   }
 };
-
+exports.getSecondaryOptions = async (req, res) => {
+  try {
+    const secondaryOptions = [
+      {
+        label: 1,
+        value: 1,
+      },
+      {
+        label: 2,
+        value: 2,
+      },
+      {
+        label: 3,
+        value: 3,
+      },
+      {
+        label: 4,
+        value: 4,
+      },
+      {
+        label: 5,
+        value: 5,
+      },
+      {
+        label: 6,
+        value: 6,
+      },
+    ];
+    res.status(200).json(secondaryOptions);
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "Failed to fetch secondary Options",
+        error: error.message,
+      });
+  }
+};
+exports.getfunctionalRequirements = async (req, res) => {
+  try {
+    //Hard Coded Options
+    const functionalReq = [
+      {
+        label: "Bar Area",
+        value: "bar_area",
+      },
+      {
+        label: "Hanging sign",
+        value: "hanging_sign",
+      },
+      {
+        label: "LED Video Wall",
+        value: "led_video_wall",
+      },
+      {
+        label: "Lounge Area",
+        value: "longue_area",
+      },
+      {
+        label: "Product Display",
+        value: "product_display",
+      },
+      {
+        label: "Reception Counter",
+        value: "reception_counter",
+      },
+      {
+        label: "Semi Closed Meeting Area",
+        value: "semi_closed_meeting_area",
+      },
+      {
+        label: "Storage Room",
+        value: "storage_room",
+      },
+      {
+        label: "Theatre Style Demo",
+        value: "theatre_style_demo",
+      },
+      {
+        label: "Touch Screen Kiosk",
+        value: "touch_screen_kiosk",
+      },
+    ];
+    res.status(200).json(functionalReq);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch functional Requirements",
+      error: error.message,
+    });
+  }
+};
 exports.createProduct = async (req, res) => {
   const {
     product_name,

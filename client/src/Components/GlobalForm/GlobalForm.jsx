@@ -38,19 +38,27 @@ function GlobalForm(props) {
   const [boothSizeOptions, setBoothSizeOptions] = useState();
   const [budgetOptions, setBudgetOptions] = useState();
   const [imageClone, setImageClone] = useState(props?.record?.pictures);
-
+  const [options, setOptions] = useState([]);
   const NavigateTo = useNavigate();
   useEffect(() => {
     callingOptions();
     if (props?.record) {
       setInputs(props.record);
-      const trueFunctionalRequirements = extractTrueFunctionalRequirements(
-        props?.record,
-        options
-      );
-      setCheckboxValues(trueFunctionalRequirements);
+      // const trueFunctionalRequirements = extractTrueFunctionalRequirements(
+      //   props?.record,
+      //   options
+      // );
+      // setCheckboxValues(trueFunctionalRequirements);
     }
   }, []);
+  useEffect(() => {
+    const trueFunctionalRequirements = extractTrueFunctionalRequirements(
+      props?.record,
+      options
+    );
+    setCheckboxValues(trueFunctionalRequirements);
+  }, [options]);
+
   function extractTrueFunctionalRequirements(input, options) {
     const result = [];
 
@@ -88,6 +96,10 @@ function GlobalForm(props) {
       }));
       setBudgetOptions(collection);
     }
+    const functionalRequirements = await getAxiosCall("/functionalReq");
+    if (functionalRequirements) {
+      setOptions(functionalRequirements?.data);
+    }
   };
   const onChange = (checkedValues) => {
     setCheckboxValues(checkedValues);
@@ -101,48 +113,48 @@ function GlobalForm(props) {
       ...updatedInputs,
     }));
   };
-  const options = [
-    {
-      label: "Bar Area",
-      value: "bar_area",
-    },
-    {
-      label: "Hanging sign",
-      value: "hanging_sign",
-    },
-    {
-      label: "LED Video Wall",
-      value: "led_video_wall",
-    },
-    {
-      label: "Lounge Area",
-      value: "longue_area",
-    },
-    {
-      label: "Product Display",
-      value: "product_display",
-    },
-    {
-      label: "Reception Counter",
-      value: "reception_counter",
-    },
-    {
-      label: "Semi Closed Meeting Area",
-      value: "semi_closed_meeting_area",
-    },
-    {
-      label: "Storage Room",
-      value: "storage_room",
-    },
-    {
-      label: "Theatre Style Demo",
-      value: "theatre_style_demo",
-    },
-    {
-      label: "Touch Screen Kiosk",
-      value: "touch_screen_kiosk",
-    },
-  ];
+  // const options = [
+  //   {
+  //     label: "Bar Area",
+  //     value: "bar_area",
+  //   },
+  //   {
+  //     label: "Hanging sign",
+  //     value: "hanging_sign",
+  //   },
+  //   {
+  //     label: "LED Video Wall",
+  //     value: "led_video_wall",
+  //   },
+  //   {
+  //     label: "Lounge Area",
+  //     value: "longue_area",
+  //   },
+  //   {
+  //     label: "Product Display",
+  //     value: "product_display",
+  //   },
+  //   {
+  //     label: "Reception Counter",
+  //     value: "reception_counter",
+  //   },
+  //   {
+  //     label: "Semi Closed Meeting Area",
+  //     value: "semi_closed_meeting_area",
+  //   },
+  //   {
+  //     label: "Storage Room",
+  //     value: "storage_room",
+  //   },
+  //   {
+  //     label: "Theatre Style Demo",
+  //     value: "theatre_style_demo",
+  //   },
+  //   {
+  //     label: "Touch Screen Kiosk",
+  //     value: "touch_screen_kiosk",
+  //   },
+  // ];
   const getBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();

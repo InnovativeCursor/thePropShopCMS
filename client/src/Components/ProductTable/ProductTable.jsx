@@ -38,8 +38,12 @@ function ProductTable(props) {
   const [switchRoutes, setSwitchRoutes] = useState(false);
   const navigateTo = useNavigate();
   useEffect(() => {
-    answer();
-  }, []);
+    if (!props.filteredProducts) {
+      answer();
+    } else {
+      setResult(props?.filteredProducts);
+    }
+  }, [props?.filteredProducts]);
   const answer = async () => {
     const result = await getAxiosCall("/products");
     setResult(result.data?.products);
