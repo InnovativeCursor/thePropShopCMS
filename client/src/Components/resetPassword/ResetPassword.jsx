@@ -6,6 +6,7 @@ import { Button, Input } from "antd";
 import Swal from "sweetalert2";
 import logo from "../../assets/Images/propshop_black.svg";
 import background from "../../assets/Images/background.jpg";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 
 function ResetPassword() {
   const { token } = useParams();
@@ -102,19 +103,25 @@ function ResetPassword() {
           <div className="uName my-4">
             <div className="password my-4">
               <div className="text-xl my-2 font-medium">New Password</div>
-              <Input
+              <Input.Password
                 placeholder="Password"
                 type="password"
                 size="large"
+                iconRender={(visible) =>
+                  visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                }
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <div className="password my-4">
               <div className="text-xl my-2 font-medium">Confirm Password</div>
-              <Input
+              <Input.Password
                 placeholder="Password"
                 type="password"
                 size="large"
+                iconRender={(visible) =>
+                  visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                }
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>

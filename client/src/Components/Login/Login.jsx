@@ -8,6 +8,8 @@ import background from "../../assets/Images/background.jpg";
 import logo from "../../assets/Images/propshop_black.png";
 import { postAxiosCall } from "../../Axios/UniversalAxiosCalls";
 
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+
 function Login(props) {
   const navigateTo = useNavigate();
   const [email, setEmail] = useState(null);
@@ -170,13 +172,16 @@ function Login(props) {
                 >
                   Password
                 </div>
-                <Input
+                <Input.Password
                   placeholder="Password"
                   type="password"
                   size="large"
                   onChange={(e) => {
                     setPassword(e.target.value);
                   }}
+                  iconRender={(visible) =>
+                    visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                  }
                   style={{ borderRadius: "4px" }}
                 />
               </div>
