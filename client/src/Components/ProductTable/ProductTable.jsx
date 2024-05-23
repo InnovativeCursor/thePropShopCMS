@@ -46,7 +46,7 @@ function ProductTable(props) {
   }, [props?.filteredProducts]);
   const answer = async () => {
     const result = await getAxiosCall("/products");
-    setResult(result.data?.products);
+    setResult(result?.data?.products);
   };
   return (
     <PageWrapper title={`${props.pageMode} Products`}>
