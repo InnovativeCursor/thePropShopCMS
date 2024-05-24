@@ -18,6 +18,11 @@ router.get("/budgetOptions", productController.getBudgetOptions);
 router.get("/boothsizeOptions", productController.getBoothSizeOptions);
 router.get("/secondaryOptions", productController.getSecondaryOptions);
 router.get("/functionalReq", productController.getfunctionalRequirements);
+router.get(
+  "/webInfo",
+  authenticateUser,
+  productController.getWebInfoRequirements
+);
 // Product routes
 router.get("/products", authenticateUser, productController.getProducts);
 router.post(

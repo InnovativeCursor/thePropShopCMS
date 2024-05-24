@@ -33,24 +33,22 @@ function GlobalForm(props) {
   const [loading, setLoading] = useState(false);
   const [imageArray, setImageArray] = useState([]);
   const [checkboxValues, setCheckboxValues] = useState();
+  const [checkboxWebsiteValues, setCheckboxWebsiteValues] = useState();
   const [inputs, setInputs] = useState({});
   const [locationOptions, setLocationOptions] = useState();
   const [boothSizeOptions, setBoothSizeOptions] = useState();
   const [budgetOptions, setBudgetOptions] = useState();
   const [imageClone, setImageClone] = useState(props?.record?.pictures);
   const [options, setOptions] = useState([]);
+  const [websiteInfoOptions, setWebsiteInfoOptions] = useState([]);
   const NavigateTo = useNavigate();
   useEffect(() => {
     callingOptions();
     if (props?.record) {
       setInputs(props.record);
-      // const trueFunctionalRequirements = extractTrueFunctionalRequirements(
-      //   props?.record,
-      //   options
-      // );
-      // setCheckboxValues(trueFunctionalRequirements);
     }
   }, []);
+  // loading the functional Req and then loading the values
   useEffect(() => {
     if (props?.record) {
       const trueFunctionalRequirements = extractTrueFunctionalRequirements(
@@ -60,7 +58,16 @@ function GlobalForm(props) {
       setCheckboxValues(trueFunctionalRequirements);
     }
   }, [options]);
-
+  // loading the Website Info Req and then loading the values
+  useEffect(() => {
+    if (props?.record) {
+      const trueFunctionalRequirements = extractTrueFunctionalRequirements(
+        props?.record,
+        websiteInfoOptions
+      );
+      setCheckboxWebsiteValues(trueFunctionalRequirements);
+    }
+  }, [websiteInfoOptions]);
   function extractTrueFunctionalRequirements(input, options) {
     const result = [];
     if (options.length != 0) {
@@ -103,11 +110,28 @@ function GlobalForm(props) {
     if (functionalRequirements) {
       setOptions(functionalRequirements?.data);
     }
+    const webInfo = await getAxiosCall("/webInfo");
+    if (webInfo) {
+      setWebsiteInfoOptions(webInfo?.data);
+    }
   };
   const onChange = (checkedValues) => {
     setCheckboxValues(checkedValues);
     // Create an updated inputs object based on checkedValues
     const updatedInputs = options.reduce((acc, option) => {
+      acc[option.value] = checkedValues.includes(option.value);
+      return acc;
+    }, {});
+    setInputs((prevInputs) => ({
+      ...prevInputs,
+      ...updatedInputs,
+    }));
+  };
+  const onChange_webInfo = (checkedValues) => {
+    setCheckboxWebsiteValues(checkedValues);
+
+    // Create an updated inputs object based on checkedValues
+    const updatedInputs = websiteInfoOptions.reduce((acc, option) => {
       acc[option.value] = checkedValues.includes(option.value);
       return acc;
     }, {});
@@ -512,7 +536,7 @@ function GlobalForm(props) {
               </div>
             </div>
 
-            <div>
+            <div className="my-5">
               <label className="block text-sm font-medium text-gray-700">
                 Filter by Functional Requirements
               </label>
@@ -531,6 +555,44 @@ function GlobalForm(props) {
             </div>
             <div className="my-5">
               <label className="block text-sm font-medium text-gray-700">
+                Website Placement info
+              </label>
+              <br />
+              <Checkbox.Group
+                disabled={
+                  props?.pageMode === "Delete" || props?.pageMode === "View"
+                    ? true
+                    : false
+                }
+                options={websiteInfoOptions}
+                onChange={onChange_webInfo}
+                value={checkboxWebsiteValues}
+              />
+              <br />
+            </div>
+            <div className="my-5">
+              <label className="block text-sm font-medium text-gray-700">
+                Key highlights
+              </label>
+              <TextArea
+                disabled={
+                  props?.pageMode === "Delete" || props?.pageMode === "View"
+                    ? true
+                    : false
+                }
+                type="text"
+                id="key_highlights"
+                name="key_highlights"
+                className="mt-1 p-2 block  w-full border rounded-md"
+                style={{ minHeight: "15rem" }}
+                onChange={(e) => {
+                  setInputs({ ...inputs, [e.target.name]: e.target.value });
+                }}
+                value={inputs?.key_highlights}
+              />
+            </div>
+            <div className="my-5">
+              <label className="block text-sm font-medium text-gray-700">
                 Description
               </label>
               <TextArea
@@ -544,6 +606,7 @@ function GlobalForm(props) {
                 id="description"
                 name="description"
                 className="mt-1 p-2 block w-full border rounded-md"
+                style={{ minHeight: "15rem" }}
                 onChange={(e) => {
                   setInputs({ ...inputs, [e.target.name]: e.target.value });
                 }}

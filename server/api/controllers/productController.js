@@ -187,6 +187,22 @@ exports.getSecondaryOptions = async (req, res) => {
         label: 6,
         value: 6,
       },
+      {
+        label: 7,
+        value: 7,
+      },
+      {
+        label: 8,
+        value: 8,
+      },
+      {
+        label: 9,
+        value: 9,
+      },
+      {
+        label: 10,
+        value: 10,
+      },
     ];
     res.status(200).json(secondaryOptions);
   } catch (error) {
@@ -249,6 +265,35 @@ exports.getfunctionalRequirements = async (req, res) => {
     });
   }
 };
+exports.getWebInfoRequirements = async (req, res) => {
+  try {
+    //Hard Coded Options
+    const webInfo = [
+      {
+        label: "Showcase On Hero Section",
+        value: "showcase_Hero_section",
+      },
+      {
+        label: "Showcase On Portfolio Section",
+        value: "showcase_portfolio_section",
+      },
+      {
+        label: "Award Winning",
+        value: "award_winning",
+      },
+      {
+        label: "Recent Work",
+        value: "recent_work",
+      },
+    ];
+    res.status(200).json(webInfo);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch functional Requirements",
+      error: error.message,
+    });
+  }
+};
 exports.createProduct = async (req, res) => {
   try {
     const {
@@ -269,6 +314,11 @@ exports.createProduct = async (req, res) => {
       storage_room,
       theatre_style_demo,
       touch_screen_kiosk,
+      showcase_Hero_section,
+      showcase_portfolio_section,
+      award_winning,
+      recent_work,
+      key_highlights,
       description,
     } = req.body;
 
@@ -291,12 +341,17 @@ exports.createProduct = async (req, res) => {
       storage_room,
       theatre_style_demo,
       touch_screen_kiosk,
+      showcase_Hero_section,
+      showcase_portfolio_section,
+      award_winning,
+      recent_work,
+      key_highlights,
       description,
       pictures: [], // Initialize as empty array, we'll update it later
     });
 
     // Generate a unique folder name using the product ID
-    const folderName = `${process.env.CLOUDINARY_DB_DEV}/product_${newProduct.prd_id}`;
+    const folderName = `${process.env.CLOUDINARY_DB}/product_${newProduct.prd_id}`;
 
     // Upload pictures to Cloudinary
     const uploadPromises = req.body.pictures?.map((base64Data) => {

@@ -8,8 +8,11 @@ const routes = require("./api/routes");
 const cors = require("cors");
 var cookieParser = require("cookie-parser");
 const sequelize = require("./api/config/database");
+const compression = require("compression"); // Add this line
 
 const app = express();
+
+app.use(compression({ level: 9 })); // Used to compress API responses
 
 const options = {
   credentials: true,
@@ -37,10 +40,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
 app.use(morgan("dev"));
 // simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to propshop application." });
-});
-app.use("/api", routes);
+app.use("/", routes);
 
 // Sync models with the database
 (async () => {

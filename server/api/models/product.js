@@ -70,6 +70,20 @@ const Product = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    showcase_Hero_section: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    showcase_portfolio_section: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    award_winning: { type: DataTypes.BOOLEAN, defaultValue: false },
+    recent_work: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    key_highlights: DataTypes.TEXT,
     description: DataTypes.TEXT,
     pictures: { type: DataTypes.JSON, allowNull: false },
   },
