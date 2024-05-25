@@ -24,6 +24,7 @@ import Categories from "../Categories/Categories";
 import AddProduct from "../Components/createProd/AddProduct";
 import ResetPassword from "../Components/resetPassword/ResetPassword";
 import FilterMenu from "../Components/filterMenu/FilterMenu";
+import Awards from "../Components/Awards/Awards";
 
 function Navigation(props) {
   const location = useLocation();
@@ -72,6 +73,7 @@ function Navigation(props) {
               />
               <Route path="/updateinner" element={<UpdateInner />} />
               <Route path="/filtermenu" element={<FilterMenu />} />
+              <Route path="/awards" element={<Awards />} />
               {/* <Route
                 path="/cataloguemanagement"
                 element={<CatalogueManagement />}

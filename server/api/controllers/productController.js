@@ -426,7 +426,7 @@ exports.createProduct = async (req, res) => {
       .json({ message: "Failed to create product", error: error.message });
   }
 };
-// Delete a product
+// Update a product
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -492,7 +492,7 @@ exports.updateProduct = async (req, res) => {
       .json({ message: "Failed to update product", error: error.message });
   }
 };
-
+// Delete a product
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;

@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
 const productController = require("../controllers/productController");
+const awardController = require("../controllers/awardController");
 const authenticateUser = require("../middleware/authenticateUser");
 
 // User routes
@@ -40,4 +41,7 @@ router.delete(
   authenticateUser,
   productController.deleteProduct
 );
+// Awards Routes
+router.get("/getAward", awardController.getAwards);
+router.post("/addAward", awardController.postAwards);
 module.exports = router;

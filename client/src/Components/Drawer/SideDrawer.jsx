@@ -27,6 +27,10 @@ const menu = [
     text: "Filter Menu",
     link: "/filtermenu",
   },
+  {
+    text: "Award Menu",
+    link: "/awards",
+  },
   // {
   //   text: "Catalogue Management",
   //   link: "/cataloguemanagement",
