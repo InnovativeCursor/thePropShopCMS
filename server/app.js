@@ -21,7 +21,7 @@ const options = {
     "http://localhost:3001",
     // "https://propshopworldwide.com",
     // "https://dev.propshopworldwide.com",
-    "http://admin.propshopworldwide.com",
+    "http://admin.thepropshopworldwide.com",
     // "http://localhost:8080",
   ],
 };

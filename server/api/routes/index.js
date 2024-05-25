@@ -28,7 +28,7 @@ router.get("/portfolioImages", productController.getPortfolioSectionImages);
 router.get("/awardWinning", productController.getAwardWinning);
 router.get("/recentWork", productController.getrecentWork);
 // Product routes
-router.get("/products", authenticateUser, productController.getProducts);
+router.get("/products", productController.getProducts);
 router.post(
   "/createproduct",
   authenticateUser,
