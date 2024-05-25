@@ -299,7 +299,8 @@ exports.getHeroSectionImages = async (req, res) => {
     const getAllProds = await Product.findAll({
       where: { showcase_Hero_section: true },
     });
-    res.status(200).json(getAllProds);
+    const pickPicturesOnly = getAllProds?.map((el)=>el?.pictures[0]);
+    res.status(200).json(pickPicturesOnly);
   } catch (error) {
     res.status(500).json({
       message: "Failed to fetch Hero Section Iamges",
