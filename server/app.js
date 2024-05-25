@@ -21,8 +21,8 @@ const options = {
     "http://localhost:3001",
     // "https://propshopworldwide.com",
     // "https://dev.propshopworldwide.com",
-    // "https://admin.propshopworldwide.com",
-    "http://localhost:8080",
+    "http://admin.propshopworldwide.com",
+    // "http://localhost:8080",
   ],
 };
 app.use(cors(options));

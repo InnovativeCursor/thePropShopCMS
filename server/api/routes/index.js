@@ -23,6 +23,10 @@ router.get(
   authenticateUser,
   productController.getWebInfoRequirements
 );
+router.get("/heroSectionImages", productController.getHeroSectionImages);
+router.get("/portfolioImages", productController.getPortfolioSectionImages);
+router.get("/awardWinning", productController.getAwardWinning);
+router.get("/recentWork", productController.getrecentWork);
 // Product routes
 router.get("/products", authenticateUser, productController.getProducts);
 router.post(

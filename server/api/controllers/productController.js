@@ -294,6 +294,58 @@ exports.getWebInfoRequirements = async (req, res) => {
     });
   }
 };
+exports.getHeroSectionImages = async (req, res) => {
+  try {
+    const getAllProds = await Product.findAll({
+      where: { showcase_Hero_section: true },
+    });
+    res.status(200).json(getAllProds);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch Hero Section Iamges",
+      error: error.message,
+    });
+  }
+};
+exports.getPortfolioSectionImages = async (req, res) => {
+  try {
+    const getAllProds = await Product.findAll({
+      where: { showcase_portfolio_section: true },
+    });
+    res.status(200).json(getAllProds);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch Hero Section Iamges",
+      error: error.message,
+    });
+  }
+};
+exports.getAwardWinning = async (req, res) => {
+  try {
+    const getAllProds = await Product.findAll({
+      where: { award_winning: true },
+    });
+    res.status(200).json(getAllProds);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch Hero Section Iamges",
+      error: error.message,
+    });
+  }
+};
+exports.getrecentWork = async (req, res) => {
+  try {
+    const getAllProds = await Product.findAll({
+      where: { award_winning: true },
+    });
+    res.status(200).json(getAllProds);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch Hero Section Iamges",
+      error: error.message,
+    });
+  }
+};
 exports.createProduct = async (req, res) => {
   try {
     const {
