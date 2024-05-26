@@ -19,6 +19,7 @@ import {
   Upload,
 } from "antd";
 import Creatable from "react-select/creatable";
+import Select from "react-select";
 import {
   deleteAxiosCall,
   getAxiosCall,
@@ -39,10 +40,17 @@ function GlobalForm(props) {
   const [boothSizeOptions, setBoothSizeOptions] = useState();
   const [budgetOptions, setBudgetOptions] = useState();
   const [imageClone, setImageClone] = useState(props?.record?.pictures);
+  const [awardImages, setAwardImages] = useState(props?.record?.award_pictures);
   const [options, setOptions] = useState([]);
   const [websiteInfoOptions, setWebsiteInfoOptions] = useState([]);
-  const [yearOptions, setYearOptions] = useState();
+  // const [yearOptions, setYearOptions] = useState();
   const NavigateTo = useNavigate();
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 100 }, (_, i) => {
+    const year = currentYear - i;
+    return { value: year, label: year.toString() };
+  });
+
   useEffect(() => {
     callingOptions();
     if (props?.record) {
@@ -220,8 +228,9 @@ function GlobalForm(props) {
       }
     }
   };
+  // A submit form used for both (i.e.. Products & Awards)
   const submitForm = async () => {
-    if (props?.type != "Awards" && props?.type) {
+    if (!props.type) {
       if (!inputs?.location || !inputs?.booth_size || !inputs?.budget) {
         Swal.fire({
           title: "error",
@@ -260,7 +269,7 @@ function GlobalForm(props) {
           // Converting images to base64
           await convertAllToBase64();
           let answer;
-          if (props?.type != "Awards" && props?.type) {
+          if (!props?.type) {
             answer = await postAxiosCall("/createproduct", inputs);
           } else {
             answer = await postAxiosCall("/addAward", inputs);
@@ -338,7 +347,12 @@ function GlobalForm(props) {
     }
   };
   const remove = async () => {
-    const answer = await deleteAxiosCall("/products", props?.record?.prd_id);
+    let answer;
+    if (props?.type != "Awards" && props?.type) {
+      answer = await deleteAxiosCall("/products", props?.record?.prd_id);
+    } else {
+      answer = await deleteAxiosCall("/deleteAward", props?.record?.award_id);
+    }
     if (answer) {
       Swal.fire({
         title: "Success",
@@ -750,6 +764,10 @@ function GlobalForm(props) {
                   </label>
                   <Input
                     name="award_title"
+                    required
+                    disabled={
+                      props?.pageMode === "Delete" || props?.pageMode === "View"
+                    }
                     onChange={(e) => {
                       setInputs({ ...inputs, [e.target.name]: e.target.value });
                     }}
@@ -760,11 +778,9 @@ function GlobalForm(props) {
                   <label className="block text-sm font-medium text-gray-700">
                     Award Year (For eg: 2021)
                   </label>
-                  <Creatable
+                  <Select
                     isDisabled={
                       props?.pageMode === "Delete" || props?.pageMode === "View"
-                        ? true
-                        : false
                     }
                     placeholder="Year"
                     required
@@ -772,13 +788,24 @@ function GlobalForm(props) {
                     onChange={(e) => {
                       setInputs({ ...inputs, award_year: Number(e.value) });
                     }}
-                    isClearable
-                    options={yearOptions?.length != 0 ? yearOptions : []}
-                    isSearchable
-                    value={{
-                      label: inputs?.award_year,
-                      value: inputs?.award_year,
+                    onCreateOption={(inputValue) => {
+                      const intValue = parseInt(inputValue, 10);
+                      if (!isNaN(intValue) && intValue <= currentYear) {
+                        setInputs({ ...inputs, award_year: intValue });
+                      } else {
+                        // Optionally, you can show a message to the user that only integers up to the current year are allowed.
+                        alert(`Please enter a valid year up to ${currentYear}`);
+                      }
                     }}
+                    isClearable
+                    options={yearOptions}
+                    isSearchable
+                    formatCreateLabel={(inputValue) => `Add ${inputValue}`}
+                    value={
+                      inputs?.award_year
+                        ? { label: inputs.award_year, value: inputs.award_year }
+                        : null
+                    }
                   />
                 </div>
               </div>
@@ -792,7 +819,6 @@ function GlobalForm(props) {
                       ? true
                       : false
                   }
-                  required
                   type="text"
                   id="award_desc"
                   name="award_desc"
@@ -849,7 +875,7 @@ function GlobalForm(props) {
                     Pictures
                   </label>
                   <div className="w-full flex flex-row">
-                    {imageClone?.map((el, index) => (
+                    {awardImages?.map((el, index) => (
                       <div className="card" key={index}>
                         <div className="flex h-60 justify-center">
                           <img
@@ -879,18 +905,15 @@ function GlobalForm(props) {
               ) : (
                 ""
               )}
-              {props.pageMode === "View" ? (
-                ""
-              ) : (
-                <div className="acitonButtons w-full flex justify-center">
-                  <button
-                    className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out items-center justify-center"
-                    type="submit"
-                  >
-                    {props.pageMode} Data
-                  </button>
-                </div>
-              )}
+
+              <div className="acitonButtons w-full flex justify-center">
+                <button
+                  className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out items-center justify-center"
+                  type="submit"
+                >
+                  {props.pageMode} Data
+                </button>
+              </div>
             </Form>
           </div>
         </PageWrapper>

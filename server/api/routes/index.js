@@ -43,5 +43,10 @@ router.delete(
 );
 // Awards Routes
 router.get("/getAward", awardController.getAwards);
-router.post("/addAward", awardController.postAwards);
+router.post("/addAward", authenticateUser, awardController.postAwards);
+router.delete(
+  "/deleteAward/:id",
+  authenticateUser,
+  awardController.deleteAwards
+);
 module.exports = router;

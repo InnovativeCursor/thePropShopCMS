@@ -18,7 +18,7 @@ exports.getAwards = async (req, res) => {
 exports.postAwards = async (req, res) => {
   try {
     //Accept query params
-    const { award_year, award_title, award_desc, pictures } = req.body;
+    const { award_year, award_title, award_desc } = req.body;
     const newProduct = await Award.create({
       award_year,
       award_title,
@@ -29,7 +29,7 @@ exports.postAwards = async (req, res) => {
     const folderName = `${process.env.CLOUDINARY_DB}/award_${newProduct.award_id}`;
 
     // Upload pictures to Cloudinary
-    const uploadPromises = pictures?.map((base64Data) => {
+    const uploadPromises = req.body.pictures?.map((base64Data) => {
       return cloudinary.uploader.upload(base64Data, {
         folder: folderName, // Specify the folder for uploaded images
       });
@@ -38,8 +38,8 @@ exports.postAwards = async (req, res) => {
     const uploadedImages = await Promise.all(uploadPromises);
 
     // Update the product with the uploaded images
-    await newProduct.update({ pictures: uploadedImages });
-    res.status(201).json({ message: "Product Created Successfully!" });
+    await newProduct.update({ award_pictures: uploadedImages });
+    res.status(201).json({ message: "Award Created Successfully!" });
   } catch (error) {
     res
       .status(500)
@@ -122,11 +122,11 @@ exports.deleteAwards = async (req, res) => {
     }
 
     // Extract the pictures array from the product
-    const { pictures } = product;
+    const { award_pictures } = product;
     // Extract the folder name from the first picture URL (assuming they all belong to the same folder)
-    const folderName = pictures[0].folder;
+    const folderName = award_pictures[0].folder;
     // Create a list of promises to delete each image from Cloudinary
-    const deletePromises = pictures.map((picture) => {
+    const deletePromises = award_pictures.map((picture) => {
       // Extract the public_id from the picture URL
       const publicId = picture.public_id;
       return cloudinary.uploader.destroy(publicId);
@@ -153,7 +153,7 @@ exports.deleteAwards = async (req, res) => {
     await cloudinary.api.delete_folder(folderName);
 
     // Delete the product from the database
-    await Award.destroy();
+    await product.destroy();
 
     res.status(200).json({ message: "Award deleted successfully" });
   } catch (error) {

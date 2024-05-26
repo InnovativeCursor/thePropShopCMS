@@ -28,8 +28,16 @@ const menu = [
     link: "/filtermenu",
   },
   {
-    text: "Award Menu",
-    link: "/awards",
+    text: "Create Award",
+    link: "/createawards",
+  },
+  // {
+  //   text: "Update Award",
+  //   link: "/updateawards",
+  // },
+  {
+    text: "Delete Award",
+    link: "/deleteawards",
   },
   // {
   //   text: "Catalogue Management",
@@ -41,9 +49,6 @@ function SideDrawer() {
   const [placement, setPlacement] = useState("left");
   const showDrawer = () => {
     setOpen(true);
-  };
-  const onChange = (e) => {
-    setPlacement(e.target.value);
   };
   const onClose = () => {
     setOpen(false);
