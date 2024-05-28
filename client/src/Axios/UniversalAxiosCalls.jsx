@@ -185,6 +185,7 @@ export let deleteAxiosCall = async (endpoint, id) => {
     return response.data;
   } catch (error) {
     store.dispatch({ type: "LOADING", payload: false });
+    
     Swal.fire({
       title: "Error",
       text: error?.response?.data?.message,
