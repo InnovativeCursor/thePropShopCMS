@@ -4,6 +4,7 @@ import { Button, Table, message } from "antd";
 import PageWrapper from "../PageContainer/PageWrapper";
 import { deleteAxiosCall, getAxiosCall } from "../../Axios/UniversalAxiosCalls";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 function ProductTable(props) {
   const columns = [
@@ -116,10 +117,28 @@ function ProductTable(props) {
   const deleteInquire = async (id) => {
     try {
       const remove = await deleteAxiosCall("/deleteInquiry", id);
-      console.log(remove)
+      if (remove) {
+        debugger;
+        Swal.fire({
+          title: "Success",
+          text: remove?.message,
+          icon: "success",
+          confirmButtonText: "Great!",
+          allowOutsideClick: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload();
+          }
+        });
+      }
     } catch (error) {
-      
-      console.error("Error deleting inquiry:", error);
+      Swal.fire({
+        title: "error",
+        text: error,
+        icon: "error",
+        confirmButtonText: "Alright!",
+        allowOutsideClick: false,
+      });
     }
   };
 

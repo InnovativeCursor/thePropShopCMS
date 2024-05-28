@@ -18,6 +18,7 @@ const options = {
     "http://localhost:3000",
     "http://localhost:3001",
     "http://admin.thepropshopworldwide.com",
+    "http://localhost:8080",
   ],
 };
 app.use(cors(options));
@@ -39,7 +40,7 @@ app.use("/", routes);
 
 (async () => {
   try {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ force: true });
     console.log("Database synchronized");
   } catch (error) {
     console.error("Unable to sync database:", error);
