@@ -6,18 +6,17 @@ import { useEffect } from "react";
 
 function App(props) {
   //Clearing localstorage after shutting the browser or tab window..
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      localStorage.clear();
-    };
-  
-    window.addEventListener("beforeunload", handleBeforeUnload);
-  
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
-  
+  // useEffect(() => {
+  //   const handleBeforeUnload = () => {
+  //     localStorage.clear();
+  //   };
+
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
+
+  //   return () => {
+  //     window.removeEventListener("beforeunload", handleBeforeUnload);
+  //   };
+  // }, []);
 
   return (
     <>

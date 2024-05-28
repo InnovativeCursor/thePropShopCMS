@@ -53,6 +53,15 @@ router.delete(
 );
 
 // Inquiry Routes
-router.post("/sendInquiry",apiLimiter,inquiryController.createInquiry);
-router.post("/deleteInquiry/:id",authenticateUser,inquiryController.deleteInquiry);
+router.get(
+  "/fetchInquiries",
+  authenticateUser,
+  inquiryController.fetchInquiries
+);
+router.post("/sendInquiry", apiLimiter, inquiryController.createInquiry);
+router.post(
+  "/deleteInquiry/:id",
+  authenticateUser,
+  inquiryController.deleteInquiry
+);
 module.exports = router;
