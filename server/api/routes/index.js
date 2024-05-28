@@ -4,7 +4,9 @@ const router = express.Router();
 const userController = require("../controllers/userController");
 const productController = require("../controllers/productController");
 const awardController = require("../controllers/awardController");
+const inquiryController = require("../controllers/inquiryController");
 const authenticateUser = require("../middleware/authenticateUser");
+const { apiLimiter } = require("../middleware/apiLimiter");
 
 // User routes
 router.post("/signup", userController.signup);
@@ -49,4 +51,8 @@ router.delete(
   authenticateUser,
   awardController.deleteAwards
 );
+
+// Inquiry Routes
+router.post("/sendInquiry",apiLimiter,inquiryController.createInquiry);
+router.post("/deleteInquiry/:id",authenticateUser,inquiryController.deleteInquiry);
 module.exports = router;
