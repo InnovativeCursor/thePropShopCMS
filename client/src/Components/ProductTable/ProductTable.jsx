@@ -118,7 +118,6 @@ function ProductTable(props) {
     try {
       const remove = await deleteAxiosCall("/deleteInquiry", id);
       if (remove) {
-        debugger;
         Swal.fire({
           title: "Success",
           text: remove?.message,
