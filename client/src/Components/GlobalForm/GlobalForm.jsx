@@ -348,7 +348,8 @@ function GlobalForm(props) {
   };
   const remove = async () => {
     let answer;
-    if (props?.type != "Awards" && props?.type) {
+
+    if (props.type != "Awards") {
       answer = await deleteAxiosCall("/products", props?.record?.prd_id);
     } else {
       answer = await deleteAxiosCall("/deleteAward", props?.record?.award_id);
@@ -845,7 +846,7 @@ function GlobalForm(props) {
                     multiple={false}
                     name="productImages"
                     fileList={imageArray}
-                    maxCount={4}
+                    maxCount={1}
                     onChange={(e) => {
                       setImageArray(e.fileList);
                     }}

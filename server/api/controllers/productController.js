@@ -299,7 +299,7 @@ exports.getHeroSectionImages = async (req, res) => {
     const getAllProds = await Product.findAll({
       where: { showcase_Hero_section: true },
     });
-    const pickPicturesOnly = getAllProds?.map((el)=>el?.pictures[0]);
+    const pickPicturesOnly = getAllProds?.map((el) => el?.pictures[0]);
     res.status(200).json(pickPicturesOnly);
   } catch (error) {
     res.status(500).json({
