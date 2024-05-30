@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import GlobalForm from "../GlobalForm/GlobalForm";
-import { Button, Table, message } from "antd";
+import { Table } from "antd";
 import PageWrapper from "../PageContainer/PageWrapper";
-import { deleteAxiosCall, getAxiosCall } from "../../Axios/UniversalAxiosCalls";
+import { getAxiosCall } from "../../Axios/UniversalAxiosCalls";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 
 function ProductTable(props) {
   const columns = [
@@ -35,37 +34,6 @@ function ProductTable(props) {
       key: "budget",
     },
   ];
-  const inquiry_columns = [
-    {
-      title: "Inquiry_ID",
-      dataIndex: "inquiry_id",
-      key: "inquiry_id",
-      fixed: "left",
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Mobile Number",
-      dataIndex: "mobile_number",
-      key: "mobile_number",
-    },
-    {
-      title: "Action",
-      dataIndex: "",
-      key: "x",
-      render: (text, record) => (
-        <Button onClick={() => deleteInquire(record.inquiry_id)}>Delete</Button>
-      ),
-    },
-  ];
   const award_columns = [
     {
       title: "Award Id",
@@ -86,24 +54,21 @@ function ProductTable(props) {
   ];
 
   const [result, setResult] = useState(null);
+  const [switchRoutes, setSwitchRoutes] = useState(false);
   const navigateTo = useNavigate();
 
   useEffect(() => {
     if (!props.filteredProducts) {
-      fetchData();
+      answer();
     } else {
       setResult(props.filteredProducts);
     }
   }, [props]);
 
-  const fetchData = async () => {
+  const answer = async () => {
     try {
       if (props.type === "Awards") {
         const result = await getAxiosCall("/getAward");
-        setResult(result.data);
-      }
-      if (props.type === "Inquiries") {
-        const result = await getAxiosCall("/fetchInquiries");
         setResult(result.data);
       } else {
         const result = await getAxiosCall("/products");
@@ -114,96 +79,57 @@ function ProductTable(props) {
     }
   };
 
-  const deleteInquire = async (id) => {
-    try {
-      const remove = await deleteAxiosCall("/deleteInquiry", id);
-      if (remove) {
-        debugger;
-        Swal.fire({
-          title: "Success",
-          text: remove?.message,
-          icon: "success",
-          confirmButtonText: "Great!",
-          allowOutsideClick: false,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.location.reload();
-          }
-        });
-      }
-    } catch (error) {
-      Swal.fire({
-        title: "error",
-        text: error,
-        icon: "error",
-        confirmButtonText: "Alright!",
-        allowOutsideClick: false,
-      });
+  const renderContent = () => {
+    if (props.type === "Awards") {
+      return (
+        <PageWrapper title={`${props.pageMode} Award`}>
+          <Table
+            columns={award_columns}
+            dataSource={result}
+            size="large"
+            onRow={(record) => ({
+              onClick: () => {
+                navigateTo(
+                  props.pageMode === "Delete"
+                    ? "/deleteawardinner"
+                    : "/updateawardinner",
+                  { state: record }
+                );
+              },
+            })}
+            scroll={{ x: 1000, y: 1500 }}
+          />
+        </PageWrapper>
+      );
+    } else if (props.type === "Inquiries") {
+      return <PageWrapper title={`${props.pageMode}`}>{/* Additional logic for Inquiries can go here */}</PageWrapper>;
+    } else {
+      return (
+        <PageWrapper title={`${props.pageMode} Products`}>
+          <Table
+            columns={columns}
+            dataSource={result}
+            size="large"
+            onRow={(record) => ({
+              onClick: () => {
+                navigateTo(
+                  props.pageMode === "View"
+                    ? "/viewinner"
+                    : props.pageMode === "Delete"
+                    ? "/deleteinner"
+                    : "/updateinner",
+                  { state: record }
+                );
+              },
+            })}
+            scroll={{ x: 1000, y: 1500 }}
+          />
+        </PageWrapper>
+      );
     }
   };
 
-  const renderTable = () => {
-    switch (props.type) {
-      case "Awards":
-        return (
-          <PageWrapper title={`${props.pageMode} Award`}>
-            <Table
-              columns={award_columns}
-              dataSource={result}
-              size="large"
-              onRow={(record) => ({
-                onClick: () => {
-                  navigateTo(
-                    props.pageMode === "Delete"
-                      ? "/deleteawardinner"
-                      : "/updateawardinner",
-                    { state: record }
-                  );
-                },
-              })}
-              scroll={{ x: 1000, y: 1500 }}
-            />
-          </PageWrapper>
-        );
-      case "Inquiries":
-        return (
-          <PageWrapper title={`${props.pageMode}`}>
-            <Table
-              columns={inquiry_columns}
-              dataSource={result}
-              size="large"
-              onRow={(record) => ({})}
-              scroll={{ x: 1000, y: 1500 }}
-            />
-          </PageWrapper>
-        );
-      default:
-        return (
-          <PageWrapper title={`${props.pageMode} Products`}>
-            <Table
-              columns={columns}
-              dataSource={result}
-              size="large"
-              onRow={(record) => ({
-                onClick: () => {
-                  navigateTo(
-                    props.pageMode === "View"
-                      ? "/viewinner"
-                      : props.pageMode === "Delete"
-                      ? "/deleteinner"
-                      : "/updateinner",
-                    { state: record }
-                  );
-                },
-              })}
-              scroll={{ x: 1000, y: 1500 }}
-            />
-          </PageWrapper>
-        );
-    }
-  };
-
-  return <>{renderTable()}</>;
+  return <>{renderContent()}</>;
 }
 
 export default ProductTable;
