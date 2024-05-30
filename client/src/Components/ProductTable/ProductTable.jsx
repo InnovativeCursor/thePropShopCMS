@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, message } from "antd";
+import GlobalForm from "../GlobalForm/GlobalForm";
+import { Table } from "antd";
 import PageWrapper from "../PageContainer/PageWrapper";
-import { getAxiosCall, deleteAxiosCall } from "../../Axios/UniversalAxiosCalls";
+import { getAxiosCall } from "../../Axios/UniversalAxiosCalls";
 import { useNavigate } from "react-router-dom";
 
 function ProductTable(props) {
@@ -33,39 +34,6 @@ function ProductTable(props) {
       key: "budget",
     },
   ];
-
-  const inquiry_columns = [
-    {
-      title: "Inquiry_ID",
-      dataIndex: "inquiry_id",
-      key: "inquiry_id",
-      fixed: "left",
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Mobile Number",
-      dataIndex: "mobile_number",
-      key: "mobile_number",
-    },
-    {
-      title: "Action",
-      dataIndex: "",
-      key: "x",
-      render: (text, record) => (
-        <Button onClick={() => deleteInquire(record.inquiry_id)}>Delete</Button>
-      ),
-    },
-  ];
-
   const award_columns = [
     {
       title: "Award Id",
@@ -86,6 +54,7 @@ function ProductTable(props) {
   ];
 
   const [result, setResult] = useState(null);
+  const [switchRoutes, setSwitchRoutes] = useState(false);
   const navigateTo = useNavigate();
 
   useEffect(() => {
@@ -101,9 +70,6 @@ function ProductTable(props) {
       if (props.type === "Awards") {
         const result = await getAxiosCall("/getAward");
         setResult(result.data);
-      } else if (props.type === "Inquiries") {
-        const result = await getAxiosCall("/fetchInquiries");
-        setResult(result.data);
       } else {
         const result = await getAxiosCall("/products");
         setResult(result.data.products);
@@ -113,79 +79,57 @@ function ProductTable(props) {
     }
   };
 
-  const deleteInquire = async (id) => {
-    try {
-      const remove = await deleteAxiosCall("/deleteInquiry", id);
-      message.success("Inquiry deleted successfully");
-      answer(); // Refresh the data after deletion
-    } catch (error) {
-      console.error("Error deleting inquiry:", error);
-      message.error("Failed to delete inquiry");
+  const renderContent = () => {
+    if (props.type === "Awards") {
+      return (
+        <PageWrapper title={`${props.pageMode} Award`}>
+          <Table
+            columns={award_columns}
+            dataSource={result}
+            size="large"
+            onRow={(record) => ({
+              onClick: () => {
+                navigateTo(
+                  props.pageMode === "Delete"
+                    ? "/deleteawardinner"
+                    : "/updateawardinner",
+                  { state: record }
+                );
+              },
+            })}
+            scroll={{ x: 1000, y: 1500 }}
+          />
+        </PageWrapper>
+      );
+    } else if (props.type === "Inquiries") {
+      return <PageWrapper title={`${props.pageMode}`}>{/* Additional logic for Inquiries can go here */}</PageWrapper>;
+    } else {
+      return (
+        <PageWrapper title={`${props.pageMode} Products`}>
+          <Table
+            columns={columns}
+            dataSource={result}
+            size="large"
+            onRow={(record) => ({
+              onClick: () => {
+                navigateTo(
+                  props.pageMode === "View"
+                    ? "/viewinner"
+                    : props.pageMode === "Delete"
+                    ? "/deleteinner"
+                    : "/updateinner",
+                  { state: record }
+                );
+              },
+            })}
+            scroll={{ x: 1000, y: 1500 }}
+          />
+        </PageWrapper>
+      );
     }
   };
 
-  const renderTable = () => {
-    switch (props.type) {
-      case "Awards":
-        return (
-          <PageWrapper title={`${props.pageMode} Award`}>
-            <Table
-              columns={award_columns}
-              dataSource={result}
-              size="large"
-              onRow={(record) => ({
-                onClick: () => {
-                  navigateTo(
-                    props.pageMode === "Delete"
-                      ? "/deleteawardinner"
-                      : "/updateawardinner",
-                    { state: record }
-                  );
-                },
-              })}
-              scroll={{ x: 1000, y: 1500 }}
-            />
-          </PageWrapper>
-        );
-      case "Inquiries":
-        return (
-          <PageWrapper title={`${props.pageMode} Inquiries`}>
-            <Table
-              columns={inquiry_columns}
-              dataSource={result}
-              size="large"
-              onRow={() => ({})}
-              scroll={{ x: 1000, y: 1500 }}
-            />
-          </PageWrapper>
-        );
-      default:
-        return (
-          <PageWrapper title={`${props.pageMode} Products`}>
-            <Table
-              columns={columns}
-              dataSource={result}
-              size="large"
-              onRow={(record) => ({
-                onClick: () => {
-                  navigateTo(
-                    props.pageMode === "View"
-                      ? "/viewinner"
-                      : props.pageMode === "Delete"
-                      ? "/deleteinner"
-                      : "/updateinner",
-                    { state: record }
-                  );
-                },
-              })}
-              scroll={{ x: 1000, y: 1500 }}
-            />
-          </PageWrapper>
-        );
-    }
-  };
-
-  return <>{renderTable()}</>;
+  return <>{renderContent()}</>;
 }
 
 export default ProductTable;
