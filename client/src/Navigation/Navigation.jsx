@@ -29,6 +29,7 @@ import CreateAwards from "../Components/CreateAward/CreateAwards";
 import UpdateAwards from "../UpdateAwards/UpdateAwards";
 import DeleteAwards from "../DeleteAwards/DeleteAwards";
 import Inquiries from "../Components/Inquiries/Inquiries";
+import Testimonials from "../Components/testimonials/Testimonials";
 
 function Navigation(props) {
   const location = useLocation();
@@ -84,6 +85,7 @@ function Navigation(props) {
                 element={<ProductTable pageMode="Delete" type="Awards" />}
               />
               <Route path="/inquiries" element={<Inquiries />} />
+              <Route path="/testimonials" element={<Testimonials />} />
             </Route>
             <Route path="*" element={<Robots />} />
           </Routes>

@@ -20,10 +20,6 @@ const menu = [
     link: "/viewproducts",
   },
   {
-    text: "View Users",
-    link: "/viewusers",
-  },
-  {
     text: "Filter Menu",
     link: "/filtermenu",
   },
@@ -38,6 +34,10 @@ const menu = [
   {
     text: "Inquiries",
     link: "/inquiries",
+  },
+  {
+    text: "Testimonials",
+    link: "/testimonials",
   },
 ];
 function SideDrawer() {
