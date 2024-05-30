@@ -31,14 +31,18 @@ const menu = [
     text: "Create Award",
     link: "/createawards",
   },
+  // {
+  //   text: "Update Award",
+  //   link: "/updateawards",
+  // },
   {
     text: "Delete Award",
     link: "/deleteawards",
   },
-  {
-    text: "Inquiries",
-    link: "/inquiries",
-  },
+  // {
+  //   text: "Catalogue Management",
+  //   link: "/cataloguemanagement",
+  // },
 ];
 function SideDrawer() {
   const [open, setOpen] = useState(false);

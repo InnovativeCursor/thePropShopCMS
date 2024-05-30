@@ -9,7 +9,7 @@ function PageWrapper(props) {
           className={
             props.title === "Products"
               ? "card flex flex-col justify-center items-center"
-              : "card flex flex-col justify-center items-center w-11/12"
+              : "card flex flex-col justify-center items-center w-9/12"
           }
         >
           <div className="title">
