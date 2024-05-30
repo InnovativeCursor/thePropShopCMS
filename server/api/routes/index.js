@@ -49,4 +49,17 @@ router.delete(
   authenticateUser,
   awardController.deleteAward
 );
+
+// Inquiry Routes
+router.get(
+  "/fetchInquiries",
+  authenticateUser,
+  inquiryController.fetchInquiries
+);
+router.post("/sendInquiry", apiLimiter, inquiryController.createInquiry);
+router.delete(
+  "/deleteInquiry/:id",
+  authenticateUser,
+  inquiryController.deleteInquiry
+);
 module.exports = router;
