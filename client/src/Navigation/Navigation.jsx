@@ -24,10 +24,6 @@ import Categories from "../Categories/Categories";
 import AddProduct from "../Components/createProd/AddProduct";
 import ResetPassword from "../Components/resetPassword/ResetPassword";
 import FilterMenu from "../Components/filterMenu/FilterMenu";
-import Awards from "../Components/CreateAward/CreateAwards";
-import CreateAwards from "../Components/CreateAward/CreateAwards";
-import UpdateAwards from "../UpdateAwards/UpdateAwards";
-import DeleteAwards from "../DeleteAwards/DeleteAwards";
 
 function Navigation(props) {
   const location = useLocation();
@@ -76,17 +72,10 @@ function Navigation(props) {
               />
               <Route path="/updateinner" element={<UpdateInner />} />
               <Route path="/filtermenu" element={<FilterMenu />} />
-              <Route path="/createawards" element={<CreateAwards />} />
               {/* <Route
-                path="/updateawards"
-                element={<ProductTable pageMode="Update" type="Awards" />}
+                path="/cataloguemanagement"
+                element={<CatalogueManagement />}
               /> */}
-              {/* <Route path="/updateawardinner" element={<UpdateAwards />} /> */}
-              <Route path="/deleteawardinner" element={<DeleteAwards />} />
-              <Route
-                path="/deleteawards"
-                element={<ProductTable pageMode="Delete" type="Awards" />}
-              />
               <Route path="/cms" element={<CMS />} />
               <Route path="/categories" element={<Categories />} />
             </Route>
