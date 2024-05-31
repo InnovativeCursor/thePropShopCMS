@@ -27,6 +27,18 @@ const menu = [
     text: "Filter Menu",
     link: "/filtermenu",
   },
+  {
+    text: "Create Award",
+    link: "/createawards",
+  },
+  // {
+  //   text: "Update Award",
+  //   link: "/updateawards",
+  // },
+  {
+    text: "Delete Award",
+    link: "/deleteawards",
+  },
   // {
   //   text: "Catalogue Management",
   //   link: "/cataloguemanagement",
