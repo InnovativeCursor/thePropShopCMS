@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
 const productController = require("../controllers/productController");
-const awardController = require("../controllers/awardController");
+const awardController = require("../controllers/");
 const authenticateUser = require("../middleware/authenticateUser");
 
 // User routes

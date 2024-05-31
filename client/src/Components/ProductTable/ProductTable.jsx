@@ -147,44 +147,16 @@ function ProductTable(props) {
                     { state: record }
                   );
                 },
-              };
-            }}
-            scroll={{
-              x: 1000,
-              y: 1500,
-            }}
-          />
-        </PageWrapper>
-      ) : (
-        <PageWrapper title={`${props.pageMode} Award`}>
-          <Table
-            columns={award_columns}
-            dataSource={result}
-            size="large"
-            // style={{
-            //   width: "100rem",
-            // }}
-            onRow={(record, rowIndex) => {
-              return {
-                onClick: () => {
-                  navigateTo(
-                    props.pageMode === "Delete"
-                      ? "/deleteawardinner"
-                      : "/updateawardinner",
-                    { state: record }
-                  );
-                },
-              };
-            }}
-            scroll={{
-              x: 1000,
-              y: 1500,
-            }}
-          />
-        </PageWrapper>
-      )}
-    </>
-  );
+              })}
+              scroll={{
+                x: 1000,
+                y: 1500,
+              }}
+            />
+          </PageWrapper>
+        );
+    }
+  };
+  return renderTable();
 }
-
 export default ProductTable;
