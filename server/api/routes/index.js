@@ -3,8 +3,10 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
 const productController = require("../controllers/productController");
-const awardController = require("../controllers/");
+const awardController = require("../controllers/awardController");
+const inquiryController = require("../controllers/inquiryController");
 const authenticateUser = require("../middleware/authenticateUser");
+const { apiLimiter } = require("../middleware/apiLimiter");
 
 // User routes
 router.post("/signup", userController.signup);
@@ -47,7 +49,7 @@ router.post("/addAward", authenticateUser, awardController.postAwards);
 router.delete(
   "/deleteAward/:id",
   authenticateUser,
-  awardController.deleteAward
+  awardController.deleteAwards
 );
 
 // Inquiry Routes

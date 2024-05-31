@@ -427,7 +427,7 @@ exports.createProduct = async (req, res) => {
       .json({ message: "Failed to create product", error: error.message });
   }
 };
-// Delete a product
+// Update a product
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -440,7 +440,7 @@ exports.updateProduct = async (req, res) => {
     }
 
     // Generate the folder name based on the product ID
-    const folderName = `${process.env.CLOUDINARY_DB_DEV}/product_${id}`;
+    const folderName = `${process.env.CLOUDINARY_DB}/product_${id}`;
 
     // Fetch existing images from Cloudinary
     const cloudinaryFiles = await cloudinary.api.resources({
@@ -493,7 +493,7 @@ exports.updateProduct = async (req, res) => {
       .json({ message: "Failed to update product", error: error.message });
   }
 };
-
+// Delete a product
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;

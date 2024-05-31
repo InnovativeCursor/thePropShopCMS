@@ -4,12 +4,12 @@ import React from "react";
 function PageWrapper(props) {
   return (
     <div className="w-full flex flex-row justify-center items-center md:p-10">
-      {/* <div className="card w-full flex justify-center"> */}
+      <div className="card w-full flex justify-center">
         <div
           className={
             props.title === "Products"
               ? "card flex flex-col justify-center items-center"
-              : "card flex flex-col justify-center items-center w-9/12"
+              : "card flex flex-col justify-center items-center w-11/12"
           }
         >
           <div className="title">
@@ -18,7 +18,7 @@ function PageWrapper(props) {
           <Divider />
           {props.children}
         </div>
-      {/* </div> */}
+      </div>
     </div>
   );
 }

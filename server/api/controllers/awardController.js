@@ -112,13 +112,13 @@ exports.updateAwards = async (req, res) => {
   }
 };
 // Delete a product
-exports.deleteAward = async (req, res) => {
+exports.deleteAwards = async (req, res) => {
   try {
     const { id } = req.params;
 
     const product = await Award.findByPk(id);
     if (!product) {
-      return res.status(404).json({ message: "Award not found" });
+      return res.status(404).json({ message: "Product not found" });
     }
 
     // Extract the pictures array from the product
