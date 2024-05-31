@@ -250,7 +250,8 @@ function GlobalForm(props) {
           }
           if (props.type == "Testimonials") {
             answer = await postAxiosCall("/createTestimonial", inputs);
-          } else {
+          }
+          if (props.type == "Awards") {
             answer = await postAxiosCall("/addAward", inputs);
           }
           if (answer) {
