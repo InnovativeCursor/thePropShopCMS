@@ -47,6 +47,6 @@ router.post("/addAward", authenticateUser, awardController.postAwards);
 router.delete(
   "/deleteAward/:id",
   authenticateUser,
-  awardController.deleteAwards
+  awardController.deleteAward
 );
 module.exports = router;

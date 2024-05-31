@@ -392,6 +392,82 @@ function GlobalForm(props) {
                   value={inputs?.product_name}
                 />
               </div>
+              {/* Upload Pictures */}
+              {props.pageMode === "Add" || props.pageMode === "Update" ? (
+                <div className="my-5">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Upload Pictures
+                  </label>
+                  <Upload
+                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                    // action="/upload.do"
+                    listType="picture-card"
+                    multiple={false}
+                    name="productImages"
+                    fileList={imageArray}
+                    maxCount={1}
+                    onChange={(e) => {
+                      setImageArray(e.fileList);
+                    }}
+                  >
+                    <div>
+                      <PlusOutlined />
+                      <div
+                        style={{
+                          marginTop: 8,
+                        }}
+                      >
+                        Upload
+                      </div>
+                    </div>
+                  </Upload>
+                </div>
+              ) : (
+                ""
+              )}
+              {/* Pictures */}
+              {props?.pageMode !== "Add" ? (
+                <div className="my-5">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Pictures
+                  </label>
+                  <div className="w-full flex flex-row">
+                    {awardImages?.map((el, index) => (
+                      <div className="card" key={index}>
+                        <div className="flex h-60 justify-center">
+                          <img
+                            src={el?.url}
+                            alt="asd4e"
+                            className="object-contain"
+                          />
+                        </div>
+                        {props.pageMode !== "View" &&
+                        props.pageMode !== "Delete" ? (
+                          <div className="flex flex-row justify-center items-end">
+                            <button
+                              className="my-4 text-black p-4 font-semibold bg-orange-400 hover:text-white rounded-lg"
+                              onClick={() => deleteModal(index)}
+                              type="button"
+                            >
+                              Delete Picture
+                            </button>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
 
               <div>
                 <label

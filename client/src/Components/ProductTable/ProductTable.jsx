@@ -67,96 +67,60 @@ function ProductTable(props) {
     setResult(result?.data?.products);
   };
 
-  const deleteInquire = async (id) => {
-    try {
-      const remove = await deleteAxiosCall("/deleteInquiry", id);
-      if (remove) {
-        Swal.fire({
-          title: "Success",
-          text: remove?.message,
-          icon: "success",
-          confirmButtonText: "Great!",
-          allowOutsideClick: false,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.location.reload();
-          }
-        });
-      }
-    } catch (error) {
-      Swal.fire({
-        title: "error",
-        text: error,
-        icon: "error",
-        confirmButtonText: "Alright!",
-        allowOutsideClick: false,
-      });
+  const renderContent = () => {
+    if (props.type === "Awards") {
+      return (
+        <PageWrapper title={`${props.pageMode} Award`}>
+          <Table
+            columns={award_columns}
+            dataSource={result}
+            size="large"
+            onRow={(record) => ({
+              onClick: () => {
+                navigateTo(
+                  props.pageMode === "Delete"
+                    ? "/deleteawardinner"
+                    : "/updateawardinner",
+                  { state: record }
+                );
+              },
+            })}
+            scroll={{ x: 1000, y: 1500 }}
+          />
+        </PageWrapper>
+      );
+    } else if (props.type === "Inquiries") {
+      return (
+        <PageWrapper title={`${props.pageMode}`}>
+          {/* Additional logic for Inquiries can go here */}
+        </PageWrapper>
+      );
+    } else {
+      return (
+        <PageWrapper title={`${props.pageMode} Products`}>
+          <Table
+            columns={columns}
+            dataSource={result}
+            size="large"
+            onRow={(record) => ({
+              onClick: () => {
+                navigateTo(
+                  props.pageMode === "View"
+                    ? "/viewinner"
+                    : props.pageMode === "Delete"
+                    ? "/deleteinner"
+                    : "/updateinner",
+                  { state: record }
+                );
+              },
+            })}
+            scroll={{ x: 1000, y: 1500 }}
+          />
+        </PageWrapper>
+      );
     }
   };
 
-  const renderTable = () => {
-    switch (props.type) {
-      case "Awards":
-        return (
-          <PageWrapper title={`${props.pageMode} Award`}>
-            <Table
-              columns={award_columns}
-              dataSource={result}
-              size="large"
-              onRow={(record) => ({
-                onClick: () => {
-                  navigateTo(
-                    props.pageMode === "Delete"
-                      ? "/deleteawardinner"
-                      : "/updateawardinner",
-                    { state: record }
-                  );
-                },
-              })}
-              scroll={{ x: 1000, y: 1500 }}
-            />
-          </PageWrapper>
-        );
-      case "Inquiries":
-        return (
-          <PageWrapper title={`${props.pageMode}`}>
-            <Table
-              columns={inquiry_columns}
-              dataSource={result}
-              size="large"
-              onRow={(record) => ({})}
-              scroll={{ x: 1000, y: 1500 }}
-            />
-          </PageWrapper>
-        );
-      default:
-        return (
-          <PageWrapper title={`${props.pageMode} Products`}>
-            <Table
-              columns={columns}
-              dataSource={result}
-              size="large"
-              onRow={(record) => ({
-                onClick: () => {
-                  navigateTo(
-                    props.pageMode === "View"
-                      ? "/viewinner"
-                      : props.pageMode === "Delete"
-                      ? "/deleteinner"
-                      : "/updateinner",
-                    { state: record }
-                  );
-                },
-              })}
-              scroll={{
-                x: 1000,
-                y: 1500,
-              }}
-            />
-          </PageWrapper>
-        );
-    }
-  };
-  return renderTable();
+  return <>{renderContent()}</>;
 }
 export default ProductTable;
