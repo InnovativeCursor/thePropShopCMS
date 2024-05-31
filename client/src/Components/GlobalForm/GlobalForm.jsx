@@ -269,7 +269,7 @@ function GlobalForm(props) {
           // Converting images to base64
           await convertAllToBase64();
           let answer;
-          if (!props?.type) {
+          if (props.type != "Awards") {
             answer = await postAxiosCall("/createproduct", inputs);
           } else {
             answer = await postAxiosCall("/addAward", inputs);
@@ -348,7 +348,7 @@ function GlobalForm(props) {
   };
   const remove = async () => {
     let answer;
-    if (props?.type != "Awards" && props?.type) {
+    if (props.type != "Awards") {
       answer = await deleteAxiosCall("/products", props?.record?.prd_id);
     } else {
       answer = await deleteAxiosCall("/deleteAward", props?.record?.award_id);
