@@ -66,19 +66,77 @@ function ProductTable(props) {
     const result = await getAxiosCall("/products");
     setResult(result?.data?.products);
   };
-  return (
-    <>
-      {props?.type != "Awards" ? (
-        <PageWrapper title={`${props.pageMode} Products`}>
-          <Table
-            columns={columns}
-            dataSource={result}
-            size="large"
-            // style={{
-            //   width: "100rem",
-            // }}
-            onRow={(record, rowIndex) => {
-              return {
+
+  const deleteInquire = async (id) => {
+    try {
+      const remove = await deleteAxiosCall("/deleteInquiry", id);
+      if (remove) {
+        Swal.fire({
+          title: "Success",
+          text: remove?.message,
+          icon: "success",
+          confirmButtonText: "Great!",
+          allowOutsideClick: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload();
+          }
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "error",
+        text: error,
+        icon: "error",
+        confirmButtonText: "Alright!",
+        allowOutsideClick: false,
+      });
+    }
+  };
+
+  const renderTable = () => {
+    switch (props.type) {
+      case "Awards":
+        return (
+          <PageWrapper title={`${props.pageMode} Award`}>
+            <Table
+              columns={award_columns}
+              dataSource={result}
+              size="large"
+              onRow={(record) => ({
+                onClick: () => {
+                  navigateTo(
+                    props.pageMode === "Delete"
+                      ? "/deleteawardinner"
+                      : "/updateawardinner",
+                    { state: record }
+                  );
+                },
+              })}
+              scroll={{ x: 1000, y: 1500 }}
+            />
+          </PageWrapper>
+        );
+      case "Inquiries":
+        return (
+          <PageWrapper title={`${props.pageMode}`}>
+            <Table
+              columns={inquiry_columns}
+              dataSource={result}
+              size="large"
+              onRow={(record) => ({})}
+              scroll={{ x: 1000, y: 1500 }}
+            />
+          </PageWrapper>
+        );
+      default:
+        return (
+          <PageWrapper title={`${props.pageMode} Products`}>
+            <Table
+              columns={columns}
+              dataSource={result}
+              size="large"
+              onRow={(record) => ({
                 onClick: () => {
                   navigateTo(
                     props.pageMode === "View"
