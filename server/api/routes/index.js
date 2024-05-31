@@ -5,6 +5,7 @@ const userController = require("../controllers/userController");
 const productController = require("../controllers/productController");
 const awardController = require("../controllers/awardController");
 const inquiryController = require("../controllers/inquiryController");
+const testimonialController = require("../controllers/testimonialController");
 const authenticateUser = require("../middleware/authenticateUser");
 const { apiLimiter } = require("../middleware/apiLimiter");
 
@@ -63,5 +64,17 @@ router.delete(
   "/deleteInquiry/:id",
   authenticateUser,
   inquiryController.deleteInquiry
+);
+// Testimonials
+router.get("/fetchTestimonials", testimonialController.getTestimonials);
+router.post(
+  "/createTestimonial",
+  authenticateUser,
+  testimonialController.createTestimonial
+);
+router.delete(
+  "/deleteTestimonial/:id",
+  authenticateUser,
+  testimonialController.deleteTestimonial
 );
 module.exports = router;

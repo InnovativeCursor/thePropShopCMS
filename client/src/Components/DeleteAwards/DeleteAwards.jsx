@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import GlobalForm from "../Components/GlobalForm/GlobalForm";
+import GlobalForm from "../GlobalForm/GlobalForm";
 
 function DeleteAwards() {
   const location = useLocation();

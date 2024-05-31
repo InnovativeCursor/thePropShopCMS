@@ -41,6 +41,9 @@ function GlobalForm(props) {
   const [budgetOptions, setBudgetOptions] = useState();
   const [imageClone, setImageClone] = useState(props?.record?.pictures);
   const [awardImages, setAwardImages] = useState(props?.record?.award_pictures);
+  const [company_testimonialImage, setCompany_testimonialImage] = useState(
+    props?.record?.pictures
+  );
   const [options, setOptions] = useState([]);
   const [websiteInfoOptions, setWebsiteInfoOptions] = useState([]);
   // const [yearOptions, setYearOptions] = useState();
@@ -149,48 +152,6 @@ function GlobalForm(props) {
       ...updatedInputs,
     }));
   };
-  // const options = [
-  //   {
-  //     label: "Bar Area",
-  //     value: "bar_area",
-  //   },
-  //   {
-  //     label: "Hanging sign",
-  //     value: "hanging_sign",
-  //   },
-  //   {
-  //     label: "LED Video Wall",
-  //     value: "led_video_wall",
-  //   },
-  //   {
-  //     label: "Lounge Area",
-  //     value: "longue_area",
-  //   },
-  //   {
-  //     label: "Product Display",
-  //     value: "product_display",
-  //   },
-  //   {
-  //     label: "Reception Counter",
-  //     value: "reception_counter",
-  //   },
-  //   {
-  //     label: "Semi Closed Meeting Area",
-  //     value: "semi_closed_meeting_area",
-  //   },
-  //   {
-  //     label: "Storage Room",
-  //     value: "storage_room",
-  //   },
-  //   {
-  //     label: "Theatre Style Demo",
-  //     value: "theatre_style_demo",
-  //   },
-  //   {
-  //     label: "Touch Screen Kiosk",
-  //     value: "touch_screen_kiosk",
-  //   },
-  // ];
   const getBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -230,7 +191,7 @@ function GlobalForm(props) {
   };
   // A submit form used for both (i.e.. Products & Awards)
   const submitForm = async () => {
-    if (!props.type) {
+    if (props.type == "Products") {
       if (!inputs?.location || !inputs?.booth_size || !inputs?.budget) {
         Swal.fire({
           title: "error",
@@ -241,7 +202,20 @@ function GlobalForm(props) {
         });
         return;
       }
-    } else {
+    }
+    if (props.type == "Testimonials") {
+      if (!inputs?.company_name || !inputs?.review) {
+        Swal.fire({
+          title: "error",
+          text: "Company name and Review are mandatory fields",
+          icon: "error",
+          confirmButtonText: "Alright!",
+          allowOutsideClick: false,
+        });
+        return;
+      }
+    }
+    if (props.type == "Awards") {
       if (!inputs?.award_title || !inputs?.award_year) {
         Swal.fire({
           title: "error",
@@ -271,6 +245,9 @@ function GlobalForm(props) {
           let answer;
           if (!props?.type) {
             answer = await postAxiosCall("/createproduct", inputs);
+          }
+          if (props.type == "Testimonials") {
+            answer = await postAxiosCall("/createTestimonial", inputs);
           } else {
             answer = await postAxiosCall("/addAward", inputs);
           }
@@ -348,21 +325,57 @@ function GlobalForm(props) {
   };
   const remove = async () => {
     let answer;
-    if (props.type != "Awards") {
-      answer = await deleteAxiosCall("/products", props?.record?.prd_id);
-    } else {
-      answer = await deleteAxiosCall("/deleteAward", props?.record?.award_id);
-    }
-    if (answer) {
-      Swal.fire({
-        title: "Success",
-        text: answer?.message,
-        icon: "success",
-        confirmButtonText: "Great!",
-        allowOutsideClick: false,
-      });
-      setInputs();
-      NavigateTo("/deleteproduct");
+    switch (props.type) {
+      case "Products":
+        answer = await deleteAxiosCall("/products", props?.record?.prd_id);
+        if (answer) {
+          Swal.fire({
+            title: "Success",
+            text: answer?.message,
+            icon: "success",
+            confirmButtonText: "Great!",
+            allowOutsideClick: false,
+          });
+          setInputs();
+
+          NavigateTo("/deleteproduct");
+        }
+        break;
+      case "Testimonials":
+        answer = await deleteAxiosCall(
+          "/deleteTestimonial",
+          props?.record?.testimonial_id
+        );
+        if (answer) {
+          Swal.fire({
+            title: "Success",
+            text: answer?.message,
+            icon: "success",
+            confirmButtonText: "Great!",
+            allowOutsideClick: false,
+          });
+          setInputs();
+
+          NavigateTo("/deleteTestimonials");
+        }
+        break;
+      case "Awards":
+        answer = await deleteAxiosCall("/deleteAward", props?.record?.award_id);
+        if (answer) {
+          Swal.fire({
+            title: "Success",
+            text: answer?.message,
+            icon: "success",
+            confirmButtonText: "Great!",
+            allowOutsideClick: false,
+          });
+          setInputs();
+
+          NavigateTo("/deleteawards");
+        }
+        break;
+      default:
+        break;
     }
   };
   const deleteImage = async (imageIndex) => {
@@ -646,7 +659,7 @@ function GlobalForm(props) {
                     Pictures
                   </label>
                   <div className="w-full flex flex-row">
-                    {awardImages?.map((el, index) => (
+                    {company_testimonialImage?.map((el, index) => (
                       <div className="card" key={index}>
                         <div className="flex h-60 justify-center">
                           <img

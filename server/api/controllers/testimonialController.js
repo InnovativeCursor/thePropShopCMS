@@ -1,5 +1,6 @@
 const Testimonial = require("../models/testimonials");
 const cloudinary = require("../../utils/cloudinary");
+const Joi = require("joi");
 
 // Define Joi schema
 const testimonialSchema = Joi.object({
@@ -8,7 +9,10 @@ const testimonialSchema = Joi.object({
   review: Joi.string().required(),
   pictures: Joi.array().items(Joi.string().uri()).required(), // Assuming pictures are an array of URLs
 });
-
+exports.getTestimonials = async (req, res) => {
+  const testimonialsFetched = await Testimonial.findAll({});
+  res.status(200).json(testimonialsFetched);
+};
 exports.createTestimonial = async (req, res) => {
   // Validate request data against the schema
   const { error } = testimonialSchema.validate(req.body);
@@ -27,7 +31,7 @@ exports.createTestimonial = async (req, res) => {
       pictures: [],
     });
     // Generate a unique folder name using the product ID
-    const folderName = `${process.env.CLOUDINARY_DB}/product_${creation.testimonial_id}`;
+    const folderName = `${process.env.CLOUDINARY_DB}/testimonial${creation.testimonial_id}`;
 
     // Upload pictures to Cloudinary
     const uploadPromises = pictures?.map((base64Data) => {
@@ -47,18 +51,53 @@ exports.createTestimonial = async (req, res) => {
       .json({ message: "Failed to Create Testimonial", error: error.message });
   }
 };
-exports.deleteInquiry = async (req, res) => {
+exports.deleteTestimonial = async (req, res) => {
   try {
     const { id } = req.params;
-    const testimonial = await Testimonial.findByPk(id);
-    if (!testimonial) {
-      return res.status(404).json({ message: "Testimonial not found" });
+
+    const product = await Testimonial.findByPk(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
     }
-    await testimonial.destroy();
-    res.status(200).json({ message: "Testimonial Deleted Successfully" });
+
+    // Extract the pictures array from the product
+    const { pictures } = product;
+    // Extract the folder name from the first picture URL (assuming they all belong to the same folder)
+    const folderName = pictures[0].folder;
+    // Create a list of promises to delete each image from Cloudinary
+    const deletePromises = pictures.map((picture) => {
+      // Extract the public_id from the picture URL
+      const publicId = picture.public_id;
+      return cloudinary.uploader.destroy(publicId);
+    });
+
+    // Wait for all images to be deleted from Cloudinary
+    await Promise.all(deletePromises);
+
+    // Get a list of all files within the folder
+    const filesInFolder = await cloudinary.api.resources({
+      type: "upload",
+      prefix: folderName,
+    });
+
+    // Create a list of promises to delete each file within the folder
+    const deleteFilePromises = filesInFolder.resources.map((file) => {
+      return cloudinary.uploader.destroy(file.public_id);
+    });
+
+    // Wait for all files to be deleted from Cloudinary
+    await Promise.all(deleteFilePromises);
+
+    // Delete the folder in Cloudinary
+    await cloudinary.api.delete_folder(folderName);
+
+    // Delete the product from the database
+    await product.destroy();
+
+    res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to Delete Testimonial", error: error.message });
+      .json({ message: "Failed to delete product", error: error.message });
   }
 };

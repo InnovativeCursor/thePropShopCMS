@@ -18,18 +18,14 @@ import ProductTable from "../Components/ProductTable/ProductTable";
 import ViewInner from "../Components/viewProd/ViewInner";
 import UpdateInner from "../Components/updateProd/UpdateInner";
 import Robots from "../Components/Robots/Robots";
-import CatalogueManagement from "../Components/catalogueManagement/CatalogueManagement";
-import CMS from "../Components/cms/CMS";
-import Categories from "../Categories/Categories";
 import AddProduct from "../Components/createProd/AddProduct";
 import ResetPassword from "../Components/resetPassword/ResetPassword";
 import FilterMenu from "../Components/filterMenu/FilterMenu";
-import Awards from "../Components/CreateAward/CreateAwards";
 import CreateAwards from "../Components/CreateAward/CreateAwards";
-import UpdateAwards from "../UpdateAwards/UpdateAwards";
-import DeleteAwards from "../DeleteAwards/DeleteAwards";
+import DeleteAwards from "../Components/DeleteAwards/DeleteAwards";
 import Inquiries from "../Components/Inquiries/Inquiries";
-import Testimonials from "../Components/testimonials/Testimonials";
+import CreateTestimonials from "../Components/testimonials/CreateTestimonials";
+import DeleteTestimonials from "../Components/DeleteTestimonials/DeleteTestimonials";
 
 function Navigation(props) {
   const location = useLocation();
@@ -85,7 +81,18 @@ function Navigation(props) {
                 element={<ProductTable pageMode="Delete" type="Awards" />}
               />
               <Route path="/inquiries" element={<Inquiries />} />
-              <Route path="/testimonials" element={<Testimonials />} />
+              <Route
+                path="/createTestimonials"
+                element={<CreateTestimonials />}
+              />
+              <Route
+                path="/deleteTestimonials"
+                element={<ProductTable pageMode="Delete" type="Testimonials" />}
+              />
+              <Route
+                path="/deleteTestimonialsinner"
+                element={<DeleteTestimonials />}
+              />
             </Route>
             <Route path="*" element={<Robots />} />
           </Routes>

@@ -85,6 +85,25 @@ function ProductTable(props) {
     },
   ];
 
+  const testimonials_col = [
+    {
+      title: "Testimonial Id",
+      dataIndex: "testimonial_id",
+      key: "testimonial_id",
+      fixed: "left",
+    },
+    {
+      title: "Company Name",
+      dataIndex: "company_name",
+      key: "company_name",
+    },
+    {
+      title: "Reviewer Name",
+      dataIndex: "reviewer_name",
+      key: "reviewer_name",
+    },
+  ];
+
   const [result, setResult] = useState(null);
   const navigateTo = useNavigate();
 
@@ -103,6 +122,9 @@ function ProductTable(props) {
         setResult(result.data);
       } else if (props.type === "Inquiries") {
         const result = await getAxiosCall("/fetchInquiries");
+        setResult(result.data);
+      } else if (props.type == "Testimonials") {
+        const result = await getAxiosCall("/fetchTestimonials");
         setResult(result.data);
       } else {
         const result = await getAxiosCall("/products");
@@ -149,12 +171,28 @@ function ProductTable(props) {
         );
       case "Inquiries":
         return (
-          <PageWrapper title={`${props.title}`}>
+          <PageWrapper title={`${props.type}`}>
             <Table
               columns={inquiry_columns}
               dataSource={result}
               size="large"
               onRow={() => ({})}
+              scroll={{ x: 1000, y: 1500 }}
+            />
+          </PageWrapper>
+        );
+      case "Testimonials":
+        return (
+          <PageWrapper title={`${props.type}`}>
+            <Table
+              columns={testimonials_col}
+              dataSource={result}
+              size="large"
+              onRow={(record) => ({
+                onClick: () => {
+                  navigateTo("/deleteTestimonialsinner", { state: record });
+                },
+              })}
               scroll={{ x: 1000, y: 1500 }}
             />
           </PageWrapper>

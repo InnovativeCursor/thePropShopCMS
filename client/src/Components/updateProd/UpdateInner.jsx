@@ -14,7 +14,11 @@ function UpdateInner() {
   }, [location]);
 
   return (
-    <>{record ? <GlobalForm pageMode="Update" record={record} /> : null}</>
+    <>
+      {record ? (
+        <GlobalForm pageMode="Update" type="Products" record={record} />
+      ) : null}
+    </>
   );
 }
 

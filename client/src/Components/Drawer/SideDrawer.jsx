@@ -36,8 +36,12 @@ const menu = [
     link: "/inquiries",
   },
   {
-    text: "Testimonials",
-    link: "/testimonials",
+    text: "Create Testimonials",
+    link: "/createTestimonials",
+  },
+  {
+    text: "Delete Testimonials",
+    link: "/deleteTestimonials",
   },
 ];
 function SideDrawer() {

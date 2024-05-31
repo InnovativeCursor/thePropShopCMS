@@ -1,8 +1,8 @@
 import React from "react";
-import PageWrapper from "../../Components/PageContainer/PageWrapper";
+import PageWrapper from "../PageContainer/PageWrapper";
 import GlobalForm from "../GlobalForm/GlobalForm";
-function Testimonials() {
+function CreateTestimonials() {
   return <GlobalForm type="Testimonials" pageMode="Add" />;
 }
 
-export default Testimonials;
+export default CreateTestimonials;
