@@ -243,7 +243,9 @@ function GlobalForm(props) {
           // Converting images to base64
           await convertAllToBase64();
           let answer;
-          if (!props?.type) {
+          debugger;
+
+          if (props.type == "Products") {
             answer = await postAxiosCall("/createproduct", inputs);
           }
           if (props.type == "Testimonials") {
